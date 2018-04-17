@@ -1,12 +1,12 @@
-#ifndef _SERVER_H_
-#define _SERVER_H_
+#ifndef _CLIENT_H_
+#define _CLIENT_H_
 
 #inlude "irc.h"
 
-class IRCServer : public IRC{
+class IRCClient : public IRC{
 	public:
-		IRCServer();
-		~IRCServer();
+		IRCClient();
+		~IRCClient();
 
 	private:
 
