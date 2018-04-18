@@ -1,9 +1,8 @@
 #
 #-L/usr/local/lib -I/usr/local/include -lreadline
 
-LIBS	= -lnsl 
-#LIBS	= -lsocket -lnsl 
-CFLAGS	= -O -L/usr/local/lib -I/usr/local/include #-lreadline
+LIBS	= -lsocket -lnsl 
+CFLAGS	= -O 
 
 all:	tcp udp
 

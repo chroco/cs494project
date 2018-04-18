@@ -1,5 +1,5 @@
 #include "client.h"
 
-IRCServer::IRCServer(){}
+IRCClient::IRCClient(){}
 
-IRCServer::~IRCServer(){}
+IRCClient::~IRCClient(){}

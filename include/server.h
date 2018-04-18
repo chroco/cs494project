@@ -1,7 +1,7 @@
 #ifndef _SERVER_H_
 #define _SERVER_H_
 
-#inlude "irc.h"
+#include "irc.h"
 
 class IRCServer : public IRC{
 	public:
