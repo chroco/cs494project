@@ -29,7 +29,7 @@ $(SERVER_BIN): $(SERVER_OBJS)
 $(CLIENT_BIN): $(CLIENT_OBJS)
 	$(CC) $(CLIENT_CFLAGS) -o $(CLIENT_BIN) $(CLIENT_OBJS)
 
-.cpp.o:
+.cpp.o: 
 	$(CC) $(FLAGS) -c $^ -o $@
 
 clean: 

@@ -7,9 +7,9 @@ class IRCClient : public IRC{
 	public:
 		IRCClient();
 		~IRCClient();
-
+		void helloSocket();
 	private:
-
+		int clientSocket;
 };
 
 #endif

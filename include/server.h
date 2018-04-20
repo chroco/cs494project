@@ -7,9 +7,10 @@ class IRCServer : public IRC{
 	public:
 		IRCServer();
 		~IRCServer();
-
+		void helloSocket();
 	private:
-
+		int welcomeSocket, newSocket;
+		struct sockaddr_storage serverStorage;
 };
 
 #endif
