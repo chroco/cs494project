@@ -33,9 +33,18 @@ void IRCServer::helloSocket(){
   addr_size = sizeof serverStorage;
   newSocket = accept(welcomeSocket, (struct sockaddr *) &serverStorage, &addr_size);
 
+	std::stringstream ss;
+
+	cereal::JSONOutputArchive oarchive( ss );
+  bool arr[] = {true, false};
+  std::vector<int> vec = {1, 2, 3, 4, 5};
+  oarchive( CEREAL_NVP(vec),arr );
+//	while(ss >> buffer);
+	strcpy(buffer, ss.str().c_str());
   /*---- Send message to the socket of the incoming connection ----*/
-  strcpy(buffer,"Hello Socket!\n");
-  send(newSocket,buffer,sizeof("Hello Socket!\n")/sizeof(char),0);
+//  strcpy(buffer,"Hello Socket!\n");
+//  send(newSocket,buffer,sizeof("Hello Socket!\n")/sizeof(char),0);
+  send(newSocket,buffer,BUFFER_SIZE,0);
 
 }
 
