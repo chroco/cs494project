@@ -14,6 +14,10 @@
 #define HOME "127.0.0.1"
 #define PORT 7891
 
+typedef struct {
+	int test[2];
+} TestPacket;
+
 class IRC{
 	public:
 		IRC();

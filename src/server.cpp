@@ -36,10 +36,14 @@ void IRCServer::helloSocket(){
 	std::stringstream ss;
 
 	cereal::JSONOutputArchive oarchive( ss );
-  bool arr[] = {true, false};
-  std::vector<int> vec = {1, 2, 3, 4, 5};
-  oarchive( CEREAL_NVP(vec),arr );
-//	while(ss >> buffer);
+ // bool arr[] = {true, false};
+ // std::vector<int> vec = {1, 2, 3, 4, 5};
+ // oarchive( CEREAL_NVP(vec),arr );
+	TestPacket test;
+	test.test[0]=9;
+	test.test[1]=0;
+  oarchive(test.test[0],test.test[1]);
+
 	strcpy(buffer, ss.str().c_str());
   /*---- Send message to the socket of the incoming connection ----*/
 //  strcpy(buffer,"Hello Socket!\n");
