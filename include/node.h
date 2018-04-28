@@ -11,6 +11,9 @@ class Node{
 
 		Node *getPrev();
 		Node *getNext();
+		int setPrev(Node *pNode);
+		int setNext(Node *pNode);
+		unsigned int getNodeID();
 	protected:
 		Node *pPrev;
 		Node *pNext;

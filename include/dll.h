@@ -13,9 +13,11 @@ class DLL{
 		int removeHead();
 		int removeTail();
 		Node *search(unsigned int id);
-	protcted:
+	protected:
+		int destroyList();
 		Node *pHead;
 		Node *pTail;
+		unsigned int node_id;
 };
 
 

@@ -57,6 +57,15 @@ $(TEST_BIN): $(TEST_OBJS)
 .cpp.o: 
 	$(CC) $(FLAGS) -c $^ -o $@
 
+run_server:
+	./$(SERVER_BIN);
+
+run_client:
+	./$(CLIENT_BIN)
+
+run_test:
+	./$(TEST_BIN)
+
 clean: 
 	rm -f $(SRC)/*.o \
 		*.o \
