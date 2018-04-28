@@ -7,6 +7,8 @@ class IRCServer : public IRC{
 	public:
 		IRCServer();
 		~IRCServer();
+		void welcome();
+		void respond();
 		void helloSocket();
 	private:
 		int welcomeSocket, newSocket;

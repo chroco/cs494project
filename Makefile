@@ -1,41 +1,71 @@
 CC=g++ -std=c++11
+
 SERVER_BIN=server 
-CLIENT_BIN=client 
+CLIENT_BIN=client
+TEST_BIN=test
+
 CLIENT_CFLAGS=
 SERVER_CFLAGS=
-FLAGS=-I ./include -g -Wall -Wextra -std=c++11 -Wno-unused-parameter
+TEST_CFLAGS=
+FLAGS=-I ./include -g -Wall -Wextra \
+			-std=c++11 -Wno-unused-parameter
+
 INC= ./include
 SRC= ./src
-OBJ=./src/obj
-SERVER_SRCS=$(SRC)/server_main.cpp $(SRC)/server.cpp $(SRC)/irc.cpp
-CLIENT_SRCS=$(SRC)/client_main.cpp $(SRC)/client.cpp $(SRC)/irc.cpp
-SERVER_INC=$(INC)/server.h $(INC)/irc.h
-CLIENT_INC=$(INC)/client.h $(INC)/irc.h
+OBJ= ./src/obj
+
+SERVER_SRCS=$(SRC)/server_main.cpp \
+						$(SRC)/server.cpp \
+						$(SRC)/irc.cpp
+
+CLIENT_SRCS=$(SRC)/client_main.cpp \
+						$(SRC)/client.cpp \
+						$(SRC)/irc.cpp
+
+TEST_SRCS=$(SRC)/test_main.cpp \
+					$(SRC)/test.cpp \
+					$(SRC)/node.cpp
+
+SERVER_INC=$(INC)/server.h \
+					 $(INC)/irc.h
+
+CLIENT_INC=$(INC)/client.h \
+					 $(INC)/irc.h
+
+TEST_INC=$(INC)/test.h \
+				 $(INC)/node.h
+
 SERVER_OBJS = $(SERVER_SRCS:.cpp=.o)
 CLIENT_OBJS = $(CLIENT_SRCS:.cpp=.o)
+TEST_OBJS = $(TEST_SRCS:.cpp=.o)
 
-default: $(SERVER_BIN) $(CLIENT_BIN)
-	@echo $(SERVER_BIN) and $(CLIENT_BIN) compiled
+default: $(SERVER_BIN) $(CLIENT_BIN) $(TEST_BIN)
+	@echo build successful!
  
-#server: $(SERVER_BIN)
-#	@echo $(SERVER_BIN) compiled
-
 $(SERVER_BIN): $(SERVER_OBJS)
 	$(CC) $(SERVER_CFLAGS) -o $(SERVER_BIN) $(SERVER_OBJS)
-
-#client: $(CLIENT_BIN)
-#	@echo $(CLIENT_BIN) compiled
+	@echo $(SERVER_BIN) compiled!
 
 $(CLIENT_BIN): $(CLIENT_OBJS)
 	$(CC) $(CLIENT_CFLAGS) -o $(CLIENT_BIN) $(CLIENT_OBJS)
+	@echo $(CLIENT_BIN) compiled!
+
+$(TEST_BIN): $(TEST_OBJS)
+	$(CC) $(TEST_CFLAGS) -o $(TEST_BIN) $(TEST_OBJS)
+	@echo $(TEST_BIN) compiled!
 
 .cpp.o: 
 	$(CC) $(FLAGS) -c $^ -o $@
 
 clean: 
-	rm -f $(SRC)/*.o *.o $(SERVER_BIN) $(CLIENT_BIN)
+	rm -f $(SRC)/*.o \
+		*.o \
+		$(SERVER_BIN) \
+		$(CLIENT_BIN) \
+		$(TEST_BIN)
 
 valgrind: $(BIN)
 	valgrind --leak-check=full \
 		./$(SERVER_BIN)
 		./$(CLIENT_BIN)
+		./$(TEST_BIN)

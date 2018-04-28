@@ -2,8 +2,8 @@
 
 int main(int argc,char *argv[]){
 	IRCServer *pServer = new IRCServer();
-	pServer->helloSocket();
-	//pServer->testSerializer();
+	//pServer->helloSocket();
+	pServer->welcome();
 
 	delete pServer;
 	return 0;
