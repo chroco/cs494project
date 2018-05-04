@@ -19,9 +19,9 @@ int Test::testNode(){
 	TEST_ASSERT_PTR_EQ(pNode->getPrev(),prev);
 	TEST_ASSERT_PTR_EQ(pNode->getNext(),next);
 	TEST_ASSERT_INT_EQ(pNode->getNodeID(),42);
+	delete pNode;
 	delete next;
 	delete prev;
-	delete pNode;
 //*/
 	fprintf(stderr,"testNode(prev,next,42) passed!\n");
 	return 0;

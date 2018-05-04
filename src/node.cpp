@@ -6,11 +6,8 @@ Node::Node()
 }
 
 Node::Node(Node *prev,Node *next,unsigned int id)
-//	: pPrev(prev),pNext(next),node_id(id)
-{
-	pPrev=prev;
-	pNext=next;
-	node_id=id;
+	: pPrev(prev),pNext(next),node_id(id){
+
 }
 
 Node::~Node(){
