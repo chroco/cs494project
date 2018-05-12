@@ -5,6 +5,11 @@ Node::Node()
 
 }
 
+Node::Node(unsigned int id)
+	: pPrev(NULL),pNext(NULL),node_id(id){
+
+}
+
 Node::Node(Node *prev,Node *next,unsigned int id)
 	: pPrev(prev),pNext(next),node_id(id){
 
@@ -12,14 +17,6 @@ Node::Node(Node *prev,Node *next,unsigned int id)
 
 Node::~Node(){
 	pPrev=pNext=NULL;
-/*
-	if(pNext){
-		delete pNext;
-	}
-	if(pPrev){
-		delete pPrev;
-	}
-//*/
 }
 
 Node *Node::getNext(){

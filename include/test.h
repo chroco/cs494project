@@ -70,12 +70,17 @@ class Test{
 	public:
 		Test();
 		~Test();
-
-		int testNode();
-		int testDLL();
-		int testIRC();
-		int testServer();
-		int testClient();
+		// unit tests
+		int test_Node();
+		int test_DLL();
+		int test_DLL_createNode();
+		// integration tests
+		int test_IRC();
+		int test_Server();
+		int test_Client();
+		int test_DLL_insertNode();
+		int test_DLL_searchNode();
+		int test_DLL_Node();
 
 	private:
 

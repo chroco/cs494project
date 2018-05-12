@@ -6,6 +6,7 @@
 class Node{
 	public:
 		Node();
+		Node(unsigned int id);
 		Node(Node *prev,Node *next,unsigned int id);
 		~Node();
 

@@ -1,56 +1,140 @@
 #include "dll.h"
-DLL::DLL():pHead(NULL),pTail(NULL),node_id(0){
+
+DLL::DLL()
+	:pHead(NULL),pTail(NULL),node_id(0),node_count(0){
 	
 }
 
 DLL::~DLL(){
-
+	if(pHead){
+		destroyList();
+	}
 }
-	
-int DLL::intsertHead(Node *pNode){
-	if(pNode){
-		return 1;
+
+Node *DLL::createNode(){
+	++node_count;
+	return new Node(node_id);
+}
+
+int DLL::insertNode(Node *pNode){
+	return insertHead(pNode);
+}
+
+Node *DLL::getHead(){
+	return pHead;
+}
+
+Node *DLL::getTail(){
+	return pTail;
+}
+
+long int DLL::getNodeCount(){
+	return node_count;
+}
+
+int DLL::insertHead(Node *pNode){
+	if(!pNode){
+		return EXIT_FAILURE;
 	}
 	if(!pHead){
-		pHead=pNode();
-		pTail=pNode();
+		pHead=pTail=pNode;
 	}else{
 		pNode->setNext(pHead);
 		pHead->setPrev(pNode);
 		pHead=pNode;
 	}
-
-	return 0;
+	++node_id;
+	return EXIT_SUCCESS;
 }
 
-int DLL::intsertTail(Node *pNode){
+int DLL::insertTail(Node *pNode){
 
-	return 0;
+	return EXIT_SUCCESS;
+}
+
+int DLL::removeNode(Node *pNode){
+	Node *pTemp=NULL;
+	if(!pNode){
+		return EXIT_FAILURE;
+	}
+	if(pHead==pTail){
+		pHead=pTail=NULL;
+		delete pNode;
+		pNode=NULL;
+	}else if(pNode==pHead){
+		return removeHead();
+	}else if(pNode==pTail){
+		return removeTail();
+	}else{
+		pTemp=pNode;
+		pNode=pNode->getPrev();
+		pNode->setNext(pTemp->getNext());
+		(pNode->getNext())->setPrev(pNode);
+		delete pTemp;
+	}
+	--node_count;
+	return EXIT_SUCCESS;
 }
 
 int DLL::removeHead(){
 	if(!pHead){
-		return 1;
+		return EXIT_FAILURE;
 	}
 	Node *pNode=pHead;
-	pHead=pHead->getNext();
-	pHead->setPrev(NULL);
+	if(!pHead->getNext()){
+		pHead=NULL;
+	}else{
+		pHead=pHead->getNext();
+		pHead->setPrev(NULL);
+	}
 	delete pNode;
-
-	return 0;
+	--node_count;
+	return EXIT_SUCCESS;
 }
 
 int DLL::removeTail(){
-
-	return 0;
+	if(!pTail){
+		return EXIT_FAILURE;
+	}
+	Node *pNode = pTail;
+	pTail=pNode->getPrev();
+	pTail->setNext(NULL);
+	delete pNode;
+	--node_count;
+	return EXIT_SUCCESS;
 }
 
-Node *DLL::search(unsigned int id){
-
+Node *DLL::searchNode(unsigned int id){
+	Node *pTemp = NULL;
+	if(!pHead){
+		return NULL;
+	}
+	pTemp=pHead;
+	while(pTemp){
+		if(pTemp->getNodeID()==id){
+			return pTemp;
+		}
+		pTemp=pTemp->getNext();
+	}
 	return NULL;
 }
 
-int DLL::destroyList(){
+bool DLL::isEmptyList(){
+	return (!pHead)?true:false;
+}
 
-	return 0;
+int DLL::destroyList(){
+	int i=0;
+/*
+	if(!pHead){
+		fprintf(stderr,"pHead is NULL!\n");
+		return i;
+	}
+//*/
+	for(;pHead;++i){
+		if(removeHead()){
+			fprintf(stderr,"Error removing pHead!\n");
+		}
+	}
+	return i;
 }

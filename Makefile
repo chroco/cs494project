@@ -24,6 +24,7 @@ CLIENT_SRCS=$(SRC)/client_main.cpp \
 
 TEST_SRCS=$(SRC)/test_main.cpp \
 					$(SRC)/test.cpp \
+					$(SRC)/dll.cpp \
 					$(SRC)/node.cpp
 
 SERVER_INC=$(INC)/server.h \
@@ -33,6 +34,7 @@ CLIENT_INC=$(INC)/client.h \
 					 $(INC)/irc.h
 
 TEST_INC=$(INC)/test.h \
+				 $(INC)/dll.h	\
 				 $(INC)/node.h
 
 SERVER_OBJS = $(SERVER_SRCS:.cpp=.o)
@@ -57,10 +59,10 @@ $(TEST_BIN): $(TEST_OBJS)
 .cpp.o: 
 	$(CC) $(FLAGS) -c $^ -o $@
 
-run_server:
-	./$(SERVER_BIN);
+run_server:	run_test
+	./$(SERVER_BIN)
 
-run_client:
+run_client: run_test
 	./$(CLIENT_BIN)
 
 run_test:
