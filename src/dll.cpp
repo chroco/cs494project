@@ -2,7 +2,6 @@
 
 DLL::DLL()
 	:pHead(NULL),pTail(NULL),node_id(0),node_count(0){
-	
 }
 
 DLL::~DLL(){
@@ -52,26 +51,25 @@ int DLL::insertTail(Node *pNode){
 	return EXIT_SUCCESS;
 }
 
-int DLL::removeNode(Node *pNode){
-	Node *pTemp=NULL;
-	if(!pNode){
+int DLL::removeNode(Node **pNode){
+	if(!(*pNode)){
 		return EXIT_FAILURE;
 	}
 	if(pHead==pTail){
 		pHead=pTail=NULL;
-		delete pNode;
-		pNode=NULL;
-	}else if(pNode==pHead){
+		delete *pNode;
+	}else if(*pNode==pHead){
+		*pNode=NULL;
 		return removeHead();
-	}else if(pNode==pTail){
+	}else if(*pNode==pTail){
+		*pNode=NULL;
 		return removeTail();
 	}else{
-		pTemp=pNode;
-		pNode=pNode->getPrev();
-		pNode->setNext(pTemp->getNext());
-		(pNode->getNext())->setPrev(pNode);
-		delete pTemp;
+		(*pNode)->getPrev()->setNext((*pNode)->getNext());
+		(*pNode)->getNext()->setPrev((*pNode)->getPrev());
+		delete pNode;
 	}
+	*pNode=NULL;
 	--node_count;
 	return EXIT_SUCCESS;
 }
@@ -125,12 +123,6 @@ bool DLL::isEmptyList(){
 
 int DLL::destroyList(){
 	int i=0;
-/*
-	if(!pHead){
-		fprintf(stderr,"pHead is NULL!\n");
-		return i;
-	}
-//*/
 	for(;pHead;++i){
 		if(removeHead()){
 			fprintf(stderr,"Error removing pHead!\n");

@@ -25,6 +25,7 @@ CLIENT_SRCS=$(SRC)/client_main.cpp \
 TEST_SRCS=$(SRC)/test_main.cpp \
 					$(SRC)/test.cpp \
 					$(SRC)/dll.cpp \
+					$(SRC)/channel.cpp \
 					$(SRC)/node.cpp
 
 SERVER_INC=$(INC)/server.h \
@@ -35,6 +36,7 @@ CLIENT_INC=$(INC)/client.h \
 
 TEST_INC=$(INC)/test.h \
 				 $(INC)/dll.h	\
+				 $(INC)/channel.h	\
 				 $(INC)/node.h
 
 SERVER_OBJS = $(SERVER_SRCS:.cpp=.o)
@@ -66,6 +68,7 @@ run_client: run_test
 	./$(CLIENT_BIN)
 
 run_test:
+	valgrind --leak-check=full \
 	./$(TEST_BIN)
 
 clean: 

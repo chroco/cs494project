@@ -17,7 +17,7 @@ class DLL{
 		Node *getHead();
 		Node *getTail();
 		long int getNodeCount();
-		int removeNode(Node *pNode);
+		int removeNode(Node **pNode);
 		Node *searchNode(unsigned int id);
 		bool isEmptyList();
 	protected:

@@ -67,7 +67,7 @@ int Test::test_DLL_searchNode(){
 	TEST_ASSERT_INT_EQ(pDLL->getNodeCount(),i);
 	pNode=pDLL->searchNode(4);
 	TEST_ASSERT_PTR_EQ(pDLL->searchNode(4),pTestNode);
-	TEST_ASSERT_INT_EQ(pDLL->removeNode(pNode),EXIT_SUCCESS);
+	TEST_ASSERT_INT_EQ(pDLL->removeNode(&pNode),EXIT_SUCCESS);
 	TEST_ASSERT_PTR_EQ(pNode,NULL);
 	TEST_ASSERT_INT_EQ(pDLL->destroyList(),4);
 	TEST_ASSERT_INT_EQ(pDLL->getNodeCount(),0);
@@ -75,6 +75,33 @@ int Test::test_DLL_searchNode(){
 	fprintf(stderr,"test_searchNode() passed!\n");
 	return EXIT_SUCCESS;
 }
+
+int Test::test_Channel_searchNode(){
+	int i;
+	ChannelList *pChannels = new ChannelList();
+	Node *pNode=NULL,
+			 *pTestNode=NULL;
+
+	for(i=0;i<5;++i){
+		pNode = pChannels->createNode();
+		if(i==4){
+			pTestNode=pNode;
+		}
+		pChannels->insertNode(pNode);
+	}
+	pNode=NULL;
+	TEST_ASSERT_INT_EQ(pChannels->getNodeCount(),i);
+	pNode=pChannels->searchNode(4);
+	TEST_ASSERT_PTR_EQ(pChannels->searchNode(4),pTestNode);
+	TEST_ASSERT_INT_EQ(pChannels->removeNode(&pNode),EXIT_SUCCESS);
+	TEST_ASSERT_PTR_EQ(pNode,NULL);
+	TEST_ASSERT_INT_EQ(pChannels->destroyList(),4);
+	TEST_ASSERT_INT_EQ(pChannels->getNodeCount(),0);
+
+	fprintf(stderr,"test_Channel_searchNode() passed!\n");
+	return EXIT_SUCCESS;
+}
+
 
 int Test::test_DLL(){
 

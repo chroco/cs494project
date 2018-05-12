@@ -2,17 +2,14 @@
 
 Node::Node()
 	: pPrev(NULL),pNext(NULL),node_id(0){
-
 }
 
 Node::Node(unsigned int id)
 	: pPrev(NULL),pNext(NULL),node_id(id){
-
 }
 
 Node::Node(Node *prev,Node *next,unsigned int id)
 	: pPrev(prev),pNext(next),node_id(id){
-
 }
 
 Node::~Node(){

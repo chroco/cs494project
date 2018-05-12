@@ -8,6 +8,7 @@
 
 #include "node.h"
 #include "dll.h"
+#include "channel.h"
 #include "irc.h"
 #include "server.h"
 #include "client.h"
@@ -80,6 +81,7 @@ class Test{
 		int test_Client();
 		int test_DLL_insertNode();
 		int test_DLL_searchNode();
+		int test_Channel_searchNode();
 		int test_DLL_Node();
 
 	private:
