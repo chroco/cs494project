@@ -51,13 +51,14 @@ int DLL::insertTail(Node *pNode){
 	return EXIT_SUCCESS;
 }
 
+//*
 int DLL::removeNode(Node **pNode){
-	if(!(*pNode)){
+	if(!pNode){
+		fprintf(stderr,"No **pNode to remove!\n");
 		return EXIT_FAILURE;
 	}
 	if(pHead==pTail){
 		pHead=pTail=NULL;
-		delete *pNode;
 	}else if(*pNode==pHead){
 		*pNode=NULL;
 		return removeHead();
@@ -67,15 +68,40 @@ int DLL::removeNode(Node **pNode){
 	}else{
 		(*pNode)->getPrev()->setNext((*pNode)->getNext());
 		(*pNode)->getNext()->setPrev((*pNode)->getPrev());
-		delete pNode;
 	}
+	delete *pNode;
 	*pNode=NULL;
+	--node_count;
+	return EXIT_SUCCESS;
+}
+//*/
+
+int DLL::removeNode(Node *pNode){
+	if(!pNode){
+		fprintf(stderr,"No *pNode to remove!\n");
+		return EXIT_FAILURE;
+	}
+	if(pHead==pTail){
+		pHead=pTail=NULL;
+	}else if(pNode==pHead){
+		pNode=NULL;
+		return removeHead();
+	}else if(pNode==pTail){
+		pNode=NULL;
+		return removeTail();
+	}else{
+		pNode->getPrev()->setNext(pNode->getNext());
+		pNode->getNext()->setPrev(pNode->getPrev());
+	}
+	delete pNode;
+	pNode=NULL;
 	--node_count;
 	return EXIT_SUCCESS;
 }
 
 int DLL::removeHead(){
 	if(!pHead){
+		fprintf(stderr,"No head to remove!\n");
 		return EXIT_FAILURE;
 	}
 	Node *pNode=pHead;
@@ -85,7 +111,7 @@ int DLL::removeHead(){
 		pHead=pHead->getNext();
 		pHead->setPrev(NULL);
 	}
-	delete pNode;
+	if(pNode)delete pNode;
 	--node_count;
 	return EXIT_SUCCESS;
 }
@@ -103,17 +129,23 @@ int DLL::removeTail(){
 }
 
 Node *DLL::searchNode(unsigned int id){
+	unsigned int tmp_id=0;
 	Node *pTemp = NULL;
 	if(!pHead){
+		fprintf(stderr,"notlhing in list!!\n");
 		return NULL;
 	}
 	pTemp=pHead;
 	while(pTemp){
-		if(pTemp->getNodeID()==id){
+		tmp_id=pTemp->getNodeID();
+		fprintf(stderr,"id: %d\n",tmp_id);
+		if(tmp_id==id){
+			fprintf(stderr,"id found!\n");
 			return pTemp;
 		}
 		pTemp=pTemp->getNext();
 	}
+	fprintf(stderr,"id not found!\n");
 	return NULL;
 }
 

@@ -8,7 +8,7 @@ class Node{
 		Node();
 		Node(unsigned int id);
 		Node(Node *prev,Node *next,unsigned int id);
-		~Node();
+		virtual ~Node();
 
 		Node *getPrev();
 		Node *getNext();
