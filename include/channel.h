@@ -4,23 +4,39 @@
 #include "node.h"
 #include "dll.h"
 
-class ChannelNode : public Node{
+class ClientNode:public Node{
 	public:
-		ChannelNode();
-		ChannelNode(unsigned int id);
-		~ChannelNode();
+		ClientNode();
+		ClientNode(unsigned int id);
+ 		ClientNode(unsigned int id,char *n);
+ 		~ClientNode();
 	private:
 };
 
-class ChannelList : public DLL{
+class ClientList:public DLL{
+	public:
+		ClientList();
+		ClientNode *createNode();
+		~ClientList();
+	private:
+};
+
+class ChannelNode:public Node{
+	public:
+		ChannelNode();
+		ChannelNode(unsigned int id);
+		ChannelNode(unsigned int id,char *n);
+		~ChannelNode();
+	private:
+		ClientList *pClients;
+};
+
+class ChannelList:public DLL{
 	public:
 		ChannelList();
-		~ChannelList();
 		ChannelNode *createNode();
-		ChannelNode *searchChannel(char *channel_name);
-
+		~ChannelList();
 	private:
-
 };
 
 #endif

@@ -71,6 +71,7 @@ int Test::test_DLL_searchNode(){
 	}
 	TEST_ASSERT_NOT_NULL(pNode);
 	TEST_ASSERT_PTR_EQ(pDLL->searchID(4),pNode);
+	TEST_ASSERT_PTR_EQ(pDLL->searchID(4),pTestNode);
 	TEST_ASSERT_INT_EQ(pDLL->removeNode(&pNode),EXIT_SUCCESS);
 	TEST_ASSERT_PTR_EQ(pNode,NULL);
 	TEST_ASSERT_INT_EQ(pDLL->destroyList(),4);
@@ -104,8 +105,12 @@ int Test::test_Channel_searchNode(){
 	TEST_ASSERT_PTR_EQ(pChannels->searchID(4),pNode);
 	TEST_ASSERT_INT_EQ(pChannels->removeNode(&pNode),EXIT_SUCCESS);
 	TEST_ASSERT_PTR_EQ(pNode,NULL);
-	TEST_ASSERT_INT_EQ(pChannels->destroyList(),4);
+	TEST_ASSERT_INT_EQ(pChannels->removeNode(pChannels->getHead()),EXIT_SUCCESS);
+	TEST_ASSERT_INT_EQ(pChannels->removeNode(pChannels->getTail()),EXIT_SUCCESS);
+	TEST_ASSERT_INT_EQ(pChannels->destroyList(),2);
 	TEST_ASSERT_INT_EQ(pChannels->getNodeCount(),0);
+	TEST_ASSERT_INT_EQ(pChannels->removeNode(pChannels->getHead()),EXIT_FAILURE);
+	TEST_ASSERT_INT_EQ(pChannels->removeNode(pChannels->getTail()),EXIT_FAILURE);
 	delete pChannels;
 	fprintf(stderr,"test_Channel_searchNode() passed!\n");
 	return EXIT_SUCCESS;
@@ -113,12 +118,14 @@ int Test::test_Channel_searchNode(){
 
 int Test::test_Channel_searchName(){
 	int i;
-/*
+	char node_name[NAME_LENGTH]="node \0";
+//*
 	ChannelList *pChannels = new ChannelList();
 	ChannelNode *pChannelNode=NULL;
 	Node *pNode=NULL;
 
 	for(i=0;i<5;++i){
+		node_name[4] = '0' + i;
 		pChannelNode = pChannels->createNode();
 		if(i==4){
 			pNode=dynamic_cast<Node *>(pChannelNode);
@@ -127,17 +134,87 @@ int Test::test_Channel_searchName(){
 		pChannelNode = NULL;
 	}
 	TEST_ASSERT_INT_EQ(pChannels->getNodeCount(),i);
-	pNode=pChannels->searchNode(4);
+	node_name[4] = '0' + 4;
+	pNode=pChannels->searchName(node_name);
 	if(!pNode){
 		fprintf(stderr,"pNode is NULL\n");
 	}
 	TEST_ASSERT_NOT_NULL(pNode);
-	TEST_ASSERT_PTR_EQ(pChannels->searchNode(4),pNode);
+	TEST_ASSERT_PTR_EQ(pChannels->searchName(node_name),pNode);
 	TEST_ASSERT_INT_EQ(pChannels->removeNode(&pNode),EXIT_SUCCESS);
 	TEST_ASSERT_PTR_EQ(pNode,NULL);
 	TEST_ASSERT_INT_EQ(pChannels->destroyList(),4);
 	TEST_ASSERT_INT_EQ(pChannels->getNodeCount(),0);
 	delete pChannels;
+//*/
+	fprintf(stderr,"test_Channel_searchNode() passed!\n");
+	return EXIT_SUCCESS;
+}
+
+int Test::test_Client_searchNode(){
+	int i;
+	ClientList *pClients = new ClientList();
+	ClientNode *pClientNode=NULL;
+	Node *pNode=NULL;
+
+	for(i=0;i<5;++i){
+		pClientNode = pClients->createNode();
+		if(i==4){
+			pNode=dynamic_cast<Node *>(pClientNode);
+		}
+		pClients->insertNode(pClientNode);
+		pClientNode = NULL;
+	}
+	TEST_ASSERT_INT_EQ(pClients->getNodeCount(),i);
+	pNode=pClients->searchID(4);
+	if(!pNode){
+		fprintf(stderr,"pNode is NULL\n");
+	}
+	TEST_ASSERT_NOT_NULL(pNode);
+	TEST_ASSERT_PTR_EQ(pClients->searchID(4),pNode);
+	TEST_ASSERT_INT_EQ(pClients->removeNode(&pNode),EXIT_SUCCESS);
+	TEST_ASSERT_PTR_EQ(pNode,NULL);
+	TEST_ASSERT_INT_EQ(pClients->removeNode(pClients->getHead()),EXIT_SUCCESS);
+	TEST_ASSERT_INT_EQ(pClients->removeNode(pClients->getTail()),EXIT_SUCCESS);
+	TEST_ASSERT_INT_EQ(pClients->destroyList(),2);
+	TEST_ASSERT_INT_EQ(pClients->getNodeCount(),0);
+	TEST_ASSERT_INT_EQ(pClients->removeNode(pClients->getHead()),EXIT_FAILURE);
+	TEST_ASSERT_INT_EQ(pClients->removeNode(pClients->getTail()),EXIT_FAILURE);
+	delete pClients;
+	fprintf(stderr,"test_Channel_searchNode() passed!\n");
+	return EXIT_SUCCESS;
+}
+
+int Test::test_Client_searchName(){
+	int i;
+	char node_name[NAME_LENGTH]="node \0";
+//*
+	ClientList *pClients = new ClientList();
+	ClientNode *pClientNode=NULL;
+	Node *pNode=NULL;
+
+	for(i=0;i<5;++i){
+		node_name[4] = '0' + i;
+		pClientNode = pClients->createNode();
+		if(i==4){
+			pNode=dynamic_cast<Node *>(pClientNode);
+		}
+		pClients->insertNode(pClientNode);
+		pClientNode = NULL;
+	}
+	TEST_ASSERT_INT_EQ(pClients->getNodeCount(),i);
+	node_name[4] = '0' + 4;
+	pNode=pClients->searchName(node_name);
+	if(!pNode){
+		fprintf(stderr,"pNode is NULL\n");
+	}
+	TEST_ASSERT_NOT_NULL(pNode);
+	TEST_ASSERT_PTR_EQ(pClients->searchName(node_name),pNode);
+	TEST_ASSERT_INT_EQ(pClients->removeNode(&pNode),EXIT_SUCCESS);
+	TEST_ASSERT_PTR_EQ(pNode,NULL);
+	TEST_ASSERT_INT_EQ(pClients->destroyList(),4);
+	TEST_ASSERT_INT_EQ(pClients->getNodeCount(),0);
+	delete pClients;
 //*/
 	fprintf(stderr,"test_Channel_searchNode() passed!\n");
 	return EXIT_SUCCESS;

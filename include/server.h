@@ -2,6 +2,7 @@
 #define _SERVER_H_
 
 #include "irc.h"
+#include "channel.h"
 
 class IRCServer : public IRC{
 	public:
@@ -11,6 +12,7 @@ class IRCServer : public IRC{
 		void respond();
 		void helloSocket();
 	private:
+		ChannelList *pChannels;
 		int welcomeSocket, newSocket;
 		struct sockaddr_storage serverStorage;
 };

@@ -16,7 +16,10 @@ OBJ= ./src/obj
 
 SERVER_SRCS=$(SRC)/server_main.cpp \
 						$(SRC)/server.cpp \
-						$(SRC)/irc.cpp
+						$(SRC)/irc.cpp \
+						$(SRC)/dll.cpp \
+						$(SRC)/channel.cpp \
+						$(SRC)/node.cpp
 
 CLIENT_SRCS=$(SRC)/client_main.cpp \
 						$(SRC)/client.cpp \
@@ -29,7 +32,10 @@ TEST_SRCS=$(SRC)/test_main.cpp \
 					$(SRC)/node.cpp
 
 SERVER_INC=$(INC)/server.h \
-					 $(INC)/irc.h
+					 $(INC)/irc.h \
+					 $(INC)/dll.h	\
+					 $(INC)/channel.h	\
+					 $(INC)/node.h
 
 CLIENT_INC=$(INC)/client.h \
 					 $(INC)/irc.h

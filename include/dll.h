@@ -1,8 +1,6 @@
 #ifndef _DLL_H_
 #define _DLL_H_
 
-#include <stdlib.h>
-
 #include "node.h"
 #include <stdio.h>
 #include <string.h>

@@ -5,7 +5,9 @@ DLL::DLL()
 }
 
 DLL::~DLL(){
+	fprintf(stderr,"~DLL() called!\n");
 	if(pHead){
+		fprintf(stderr,"destroying the list!\n");
 		destroyList();
 	}
 }
@@ -118,12 +120,17 @@ int DLL::removeHead(){
 
 int DLL::removeTail(){
 	if(!pTail){
+		fprintf(stderr,"No tail to remove!\n");
 		return EXIT_FAILURE;
 	}
 	Node *pNode = pTail;
-	pTail=pNode->getPrev();
-	pTail->setNext(NULL);
-	delete pNode;
+	if(!pTail->getPrev()){
+			pTail=NULL;
+	}else{
+		pTail=pTail->getPrev();
+		pTail->setNext(NULL);
+	}
+	if(pNode)delete pNode;
 	--node_count;
 	return EXIT_SUCCESS;
 }
@@ -156,7 +163,7 @@ Node *DLL::searchName(char *name){
 	}
 	pTemp=pHead;
 	while(pTemp){
-		if(strcmp(pTemp->getNodeName(),name)){
+		if(strcmp(pTemp->getName(),name)){
 			fprintf(stderr,"%s found!\n",name);
 			return pTemp;
 		}
@@ -176,5 +183,6 @@ int DLL::destroyList(){
 			fprintf(stderr,"Error removing pHead!\n");
 		}
 	}
+	pHead=pTail=NULL;
 	return i;
 }
