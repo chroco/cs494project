@@ -82,6 +82,7 @@ class Test{
 		int test_DLL_insertNode();
 		int test_DLL_searchNode();
 		int test_Channel_searchNode();
+		int test_Channel_searchName();
 		int test_DLL_Node();
 
 	private:

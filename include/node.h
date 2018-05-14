@@ -15,10 +15,12 @@ class Node{
 		int setPrev(Node *pNode);
 		int setNext(Node *pNode);
 		unsigned int getNodeID();
+		char *getNodeName();
 	protected:
 		Node *pPrev;
 		Node *pNext;
 		unsigned int node_id;
+		char *pNodeName;
 		
 };
 

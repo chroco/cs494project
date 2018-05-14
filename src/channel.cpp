@@ -1,19 +1,15 @@
 #include "channel.h"
 
-ChannelNode::ChannelNode():Node(),pChannelName(NULL){
+ChannelNode::ChannelNode():Node(){
 
 }
 
-ChannelNode::ChannelNode(unsigned int id):Node(id),pChannelName(NULL){
+ChannelNode::ChannelNode(unsigned int id):Node(id){
 	
 }
 
 ChannelNode::~ChannelNode(){
 
-}
-
-char *ChannelNode::getChannelName(){
-	return pChannelName;
 }
 
 ChannelList::ChannelList(){
@@ -29,17 +25,4 @@ ChannelNode *ChannelList::createNode(){
 	return new ChannelNode(node_id);
 }
 
-ChannelNode *ChannelList::searchChannel(char *id){
-	ChannelNode *pTemp = NULL;
-	if(!pHead){
-		return NULL;
-	}
-	pTemp=(ChannelNode*)pHead;
-	while(pTemp){
-		if(strcmp(pTemp->getChannelName(),id)){
-			return pTemp;
-		}
-		pTemp=(ChannelNode *)pTemp->getNext();
-	}
-	return NULL;
-}
+

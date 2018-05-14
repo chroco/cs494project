@@ -5,6 +5,7 @@
 
 #include "node.h"
 #include <stdio.h>
+#include <string.h>
 
 class DLL{
 	public:
@@ -19,7 +20,8 @@ class DLL{
 		long int getNodeCount();
 		int removeNode(Node *pNode);
 		int removeNode(Node **pNode);
-		Node *searchNode(unsigned int id);
+		Node *searchID(unsigned int id);
+		Node *searchName(char *);
 		bool isEmptyList();
 	protected:
 		int insertHead(Node *pNode);

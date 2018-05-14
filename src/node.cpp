@@ -1,15 +1,19 @@
 #include "node.h"
 
 Node::Node()
-	: pPrev(NULL),pNext(NULL),node_id(0){
+	: pPrev(NULL),pNext(NULL),node_id(0),pNodeName(NULL){
 }
 
 Node::Node(unsigned int id)
-	: pPrev(NULL),pNext(NULL),node_id(id){
+	: pPrev(NULL),pNext(NULL),node_id(id),pNodeName(NULL){
+}
+
+Node::Node(signed int id)
+	: pPrev(NULL),pNext(NULL),node_id(id),pNodeName(NULL){
 }
 
 Node::Node(Node *prev,Node *next,unsigned int id)
-	: pPrev(prev),pNext(next),node_id(id){
+	: pPrev(prev),pNext(next),node_id(id),pNodeName(NULL){
 }
 
 Node::~Node(){
@@ -37,3 +41,8 @@ int Node::setPrev(Node *pNode){
 unsigned int Node::getNodeID(){
 	return node_id;
 }
+
+char *Node::getName(){
+	return pNodeName;
+}
+

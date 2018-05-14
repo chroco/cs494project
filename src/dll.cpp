@@ -128,7 +128,7 @@ int DLL::removeTail(){
 	return EXIT_SUCCESS;
 }
 
-Node *DLL::searchNode(unsigned int id){
+Node *DLL::searchID(unsigned int id){
 	unsigned int tmp_id=0;
 	Node *pTemp = NULL;
 	if(!pHead){
@@ -146,6 +146,22 @@ Node *DLL::searchNode(unsigned int id){
 		pTemp=pTemp->getNext();
 	}
 	fprintf(stderr,"id not found!\n");
+	return NULL;
+}
+
+Node *DLL::searchName(char *name){
+	Node *pTemp = NULL;
+	if(!pHead){
+		return NULL;
+	}
+	pTemp=pHead;
+	while(pTemp){
+		if(strcmp(pTemp->getNodeName(),name)){
+			fprintf(stderr,"%s found!\n",name);
+			return pTemp;
+		}
+		pTemp=pTemp->getNext();
+	}
 	return NULL;
 }
 
