@@ -8,7 +8,7 @@ IRC::~IRC(){}
 
 void IRC::serializeIRCPacket(IRCPacket *dest,IRCPacket *src){
   serialize_uint32_t(&dest->id,src->id);
-  serialize_msg(dest->msg, src->msg);
+//  serialize_msg(dest->msg, src->msg);
 }
 
 void IRC::deserializeIRCPacket(IRCPacket *dest,IRCPacket *src){
@@ -29,14 +29,17 @@ void IRC::deserialize_uint32_t(uint32_t *dest,uint32_t src) {
 void IRC::serialize_msg(char *dest,char *src) {
 	uint32_t i=0;
 	uint32_t temp;
-	printf("serialize_msg \n");
+	printf("serialize_msg:\n");
 	for(;i<MSG_SIZE && src[i] != '\0';i=i+sizeof(uint32_t)){
 		printf("%c",src[i]);
-		temp = htonl(reinterpret_cast<uint32_t &*>(&src[i]));
+		temp = htonl(src[i]);
 		memcpy(&dest[i],&temp,sizeof(uint32_t));
+		printf("%u\n",temp);
+		printf("%u\n",dest[i]);
 	}
 	printf("\n");
 //	memcpy(dest,src,sizeof(char)*i);
+
 }
 
 void IRC::deserialize_msg(char *dest,char *src) {

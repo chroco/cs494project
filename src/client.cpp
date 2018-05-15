@@ -40,7 +40,7 @@ void IRCClient::helloSocket(){
   
 	/*---- Print the received message ----*/
 //  printf("Data received: %u\n",testint);
-  printf("Data received: %s\n",buffer);
+  printf("Data received: %s\n",msgbuf);
 //	printf("%u\n%s\n",test.id,test.msg);
 
 }
