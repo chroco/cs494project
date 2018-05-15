@@ -33,6 +33,7 @@ void IRC::serialize_msg(char *dest,char *src) {
 	for(;i<MSG_SIZE && src[i] != '\0';i=i+sizeof(uint32_t)){
 		printf("%c",src[i]);
 		temp = htonl(src[i]);
+		printf("%c\n",ntohl(temp));
 		memcpy(&dest[i],&temp,sizeof(uint32_t));
 		printf("%u\n",temp);
 		printf("%u\n",dest[i]);
