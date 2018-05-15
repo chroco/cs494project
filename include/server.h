@@ -11,6 +11,7 @@ class IRCServer : public IRC{
 		void welcome();
 		void respond();
 		void helloSocket();
+		void getStats();
 	private:
 		ChannelList *pChannels;
 		int welcomeSocket, newSocket;

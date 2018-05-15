@@ -41,6 +41,13 @@ void IRCServer::welcome(){
   send(newSocket,buffer,BUFFER_SIZE,0);
 }
 
+
+void IRCServer::getStats(){
+	printf("sizeof(IRCPacket): %zu\n",sizeof(IRCPacket));
+	printf("sizeof(buffer): %zu\n",sizeof(buffer));
+	printf("sizeof(char)*PACKET_SIZE: %zu\n",sizeof(char)*PACKET_SIZE);
+}
+
 void IRCServer::helloSocket(){
   /*---- Create the socket. The three arguments are: ----*/
   /* 1) Internet domain 2) Stream socket 3) Default protocol (TCP in this case) */
@@ -68,23 +75,21 @@ void IRCServer::helloSocket(){
   addr_size = sizeof serverStorage;
   newSocket = accept(welcomeSocket, (struct sockaddr *) &serverStorage, &addr_size);
 
-	std::stringstream ss;
+  /*---- serialize ----*/
 
-	cereal::JSONOutputArchive oarchive( ss );
- // bool arr[] = {true, false};
- // std::vector<int> vec = {1, 2, 3, 4, 5};
- // oarchive( CEREAL_NVP(vec),arr );
-	TestPacket test;
-	test.test[0]=9;
-	test.test[1]=0;
-  oarchive(test.test[0],test.test[1]);
+	IRCPacket send_buf,test = {42u,{"hello test packet!\n\0"}};
+	uint32_t uint32_t_buf=0;
+	char sendbuf[MSG_SIZE]={0};
+//	serialize_uint32_t(&uint32_t_buf,test.id);
+	serialize_msg(sendbuf,test.msg);
+	//serializeIRCPacket(&send_buf,&test);
 
-	strcpy(buffer, ss.str().c_str());
   /*---- Send message to the socket of the incoming connection ----*/
-//  strcpy(buffer,"Hello Socket!\n");
-//  send(newSocket,buffer,sizeof("Hello Socket!\n")/sizeof(char),0);
-  send(newSocket,buffer,BUFFER_SIZE,0);
+
+  printf("serialized data: %s\n",sendbuf);
+	send(newSocket,sendbuf,sizeof(char)*MSG_SIZE,0);
+	//send(newSocket,&uint32_t_buf,PACKET_SIZE,0);
+	//send(newSocket,&send_buf,PACKET_SIZE,0);
 
 }
-
 

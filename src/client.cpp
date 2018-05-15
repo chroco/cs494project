@@ -24,9 +24,23 @@ void IRCClient::helloSocket(){
   connect(clientSocket, (struct sockaddr *) &serverAddr, addr_size);
 
   /*---- Read the message from the server into the buffer ----*/
-  recv(clientSocket, buffer, BUFFER_SIZE, 0);
+	IRCPacket recv_buf,test;
+	uint32_t uint32_t_buf=0,testint=1;
+	char rcvbuf[MSG_SIZE]={0};
+	char msgbuf[MSG_SIZE]={0};
+	recv(clientSocket,&rcvbuf,sizeof(char)*MSG_SIZE,0);
+	//recv(clientSocket,&uint32_t_buf, PACKET_SIZE, 0);
+	//recv(clientSocket,&recv_buf, PACKET_SIZE, 0);
 
-  /*---- Print the received message ----*/
-  printf("Data received: %s",buffer);
+
+  /*---- deserialze ----*/
+		deserialize_msg(msgbuf,rcvbuf);
+//		deserialize_uint32_t(&testint,uint32_t_buf);
+//	deserializeIRCPacket(&test,&recv_buf);	
+  
+	/*---- Print the received message ----*/
+//  printf("Data received: %u\n",testint);
+  printf("Data received: %s\n",buffer);
+//	printf("%u\n%s\n",test.id,test.msg);
 
 }

@@ -52,7 +52,7 @@ TEST_OBJS = $(TEST_SRCS:.cpp=.o)
 default: $(SERVER_BIN) $(CLIENT_BIN) $(TEST_BIN)
 	@echo build successful!
  
-$(SERVER_BIN): $(SERVER_OBJS)
+$(SERVER_BIN): $(SERVER_OBJS) $(SERVER_INC) $(SERVER_SRCS)
 	$(CC) $(SERVER_CFLAGS) -o $(SERVER_BIN) $(SERVER_OBJS)
 	@echo $(SERVER_BIN) compiled!
 
