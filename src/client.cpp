@@ -24,23 +24,21 @@ void IRCClient::helloSocket(){
   connect(clientSocket, (struct sockaddr *) &serverAddr, addr_size);
 
   /*---- Read the message from the server into the buffer ----*/
-	IRCPacket recv_buf,test;
-	char rcvbuf[MSG_SIZE]={0};
-	char msgbuf[MSG_SIZE]={0};
-	printf("rcvbuf[0]:  %c\n",rcvbuf[0]);
-	recv(clientSocket,&rcvbuf,sizeof(char)*MSG_SIZE,0);
-	printf("rcvbuf[0]:  %c\n",rcvbuf[0]);
-
-
-  printf("Data received: %s\n",rcvbuf);
+	IRCPacket recv,test;
+	char rcvbuf[PACKET_SIZE]={0};
+//	char msgbuf[MSG_SIZE]={0};
+	recv(clientSocket,rcvbuf,sizeof(PACKET_SIZE),0);
+	//recv(clientSocket,&recv,sizeof(char)*MSG_SIZE,0);
+//	printf("rcvbuf[0]:  %c\n",rcvbuf[0]);
+ // printf("Data received: %s\n",rcvbuf);
   /*---- deserialze ----*/
-		deserialize_msg(msgbuf,rcvbuf);
 //		deserialize_uint32_t(&testint,uint32_t_buf);
-//	deserializeIRCPacket(&test,&recv_buf);	
+	deserializeIRCPacket(&test,rcvbuf);	
   
+//	deserialize_msg(msgbuf,rcvbuf);
 	/*---- Print the received message ----*/
 //  printf("Data received: %u\n",testint);
-  printf("Data deserialized: %s\n",msgbuf);
-//	printf("%u\n%s\n",test.id,test.msg);
+//  printf("Data deserialized: %s\n",msgbuf);
+	printf("%u\n%s\n",test.id,test.msg);
 
 }

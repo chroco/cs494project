@@ -6,14 +6,24 @@ IRC::IRC():buffer{0},addr_size(0){
 
 IRC::~IRC(){}
 
-void IRC::serializeIRCPacket(IRCPacket *dest,IRCPacket *src){
-//  serialize_uint32_t(&dest->id,src->id);
-//  serialize_msg(dest->msg, src->msg);
+void IRC::serializeIRCPacket(char *dest,IRCPacket *src){
+  uint32_t_to_char4(dest,src->id);
+  serialize_msg(dest+sizeof(uint32_t),src->msg);
 }
 
-void IRC::deserializeIRCPacket(IRCPacket *dest,IRCPacket *src){
-//  deserialize_uint32_t(&dest->id,src->id);
-//  deserialize_msg(dest->msg, src->msg);
+void IRC::deserializeIRCPacket(IRCPacket *dest,char *src){
+  char4_to_uin32_t(&dest->id,src);
+  deserialize_msg(dest->msg,src+sizeof(uint32_t));
+}
+
+void IRC::serialize_uint32_t(uint32_t *dst,uint32_t src){
+	uint32_t num = htonl(src);
+	memcpy(dst, &num, sizeof(uint32_t));
+}
+
+void IRC::deserialize_uint32_t(uint32_t *dst,uint32_t src){
+	uint32_t num = ntohl(src);
+	memcpy(dst, &num, sizeof(uint32_t));
 }
 
 void IRC::uint32_t_to_char4(char *dst,uint32_t src){

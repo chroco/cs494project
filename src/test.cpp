@@ -39,6 +39,42 @@ int Test::test_DLL_createNode(){
 	return EXIT_SUCCESS;
 }
 
+int Test::test_wordSerialization(){
+	IRC *pIRC = new IRC();
+	uint32_t number = 187;
+	char word[4];
+	printf("%u\n",number);
+	pIRC->uint32_t_to_char4(word,number);
+	number = 0;
+	printf("%x %x %x %x\n", word[0], word[1], word[2], word[3]);
+	pIRC->char4_to_uin32_t(&number,word);
+	printf("%u\n",number);
+	delete pIRC;
+	if(number != 187){
+		return EXIT_FAILURE;
+	}
+	return EXIT_SUCCESS;
+}
+
+int Test::test_charArraySerialization(){
+	IRC *pIRC = new IRC();
+	char msg[MSG_SIZE] = {"Hello Serializer!\0"},
+			 ser[MSG_SIZE] = {0},
+			 res[MSG_SIZE] = {0};
+	printf("msg: %s\n",msg);
+	pIRC->serialize_msg(ser,msg);
+	printf("ser: %s\n",ser);
+	pIRC->deserialize_msg(res,ser);
+	printf("res: %s\n",res);
+	delete pIRC;
+	if(strncmp(msg,res,MSG_SIZE)){
+		return EXIT_FAILURE;
+	}
+	return EXIT_SUCCESS;
+}
+
+
+
 int Test::test_DLL_insertNode(){
 	DLL *pDLL = new DLL();
 	Node *pNode = pDLL->createNode();

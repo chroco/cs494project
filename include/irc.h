@@ -37,9 +37,11 @@ class IRC{
 		IRC();
 		~IRC();
 
-		void serializeIRCPacket(IRCPacket *dest,IRCPacket *src);
-		void deserializeIRCPacket(IRCPacket *dest,IRCPacket *src);
+		void serializeIRCPacket(char *dest,IRCPacket *src);
+		void deserializeIRCPacket(IRCPacket *dest,char *src);
 
+		void serialize_uint32_t(uint32_t *dst,uint32_t src);
+		void deserialize_uint32_t(uint32_t *dst,uint32_t src);
 		void uint32_t_to_char4(char *dst,uint32_t src);
 		void char4_to_uin32_t(uint32_t *dst, char *src);
 		void serialize_msg(char *dst,char *src);
