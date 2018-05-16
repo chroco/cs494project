@@ -30,13 +30,13 @@ void IRC::serialize_msg(char *dest,char *src) {
 	uint32_t i=0;
 	uint32_t temp;
 	printf("serialize_msg:\n");
-	for(;i<MSG_SIZE && src[i] != '\0';i=i+sizeof(uint32_t)){
+	for(;i<MSG_SIZE;i+=sizeof(uint32_t)){
 		printf("%c",src[i]);
 		temp = htonl(src[i]);
 		printf("%c\n",ntohl(temp));
 		memcpy(&dest[i],&temp,sizeof(uint32_t));
 		printf("%u\n",temp);
-		printf("%u\n",dest[i]);
+		printf("dest[i]: %u\n",dest[i]);
 	}
 	printf("\n");
 //	memcpy(dest,src,sizeof(char)*i);
@@ -46,10 +46,9 @@ void IRC::serialize_msg(char *dest,char *src) {
 void IRC::deserialize_msg(char *dest,char *src) {
 	uint32_t i=0;
 	char temp;
-	for(;i<MSG_SIZE && src[i] != '\0';++i){
-	//	src[i] = ntohl(src[i]);
+	for(;i<MSG_SIZE;++i){
 		temp = ntohl(src[i]);
-		memcpy(&dest[i],&temp,sizeof(char));
+		memcpy(&dest[i],&temp,sizeof(uint32_t));
 	}
 //	memcpy(dest,src,sizeof(char)*i);
 }

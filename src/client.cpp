@@ -28,11 +28,14 @@ void IRCClient::helloSocket(){
 	uint32_t uint32_t_buf=0,testint=1;
 	char rcvbuf[MSG_SIZE]={0};
 	char msgbuf[MSG_SIZE]={0};
+	printf("rcvbuf[0]:  %c\n",rcvbuf[0]);
 	recv(clientSocket,&rcvbuf,sizeof(char)*MSG_SIZE,0);
+	printf("rcvbuf[0]:  %c\n",rcvbuf[0]);
 	//recv(clientSocket,&uint32_t_buf, PACKET_SIZE, 0);
 	//recv(clientSocket,&recv_buf, PACKET_SIZE, 0);
 
 
+  printf("Data received: %s\n",rcvbuf);
   /*---- deserialze ----*/
 		deserialize_msg(msgbuf,rcvbuf);
 //		deserialize_uint32_t(&testint,uint32_t_buf);
@@ -40,7 +43,7 @@ void IRCClient::helloSocket(){
   
 	/*---- Print the received message ----*/
 //  printf("Data received: %u\n",testint);
-  printf("Data received: %s\n",msgbuf);
+  printf("Data deserialized: %s\n",msgbuf);
 //	printf("%u\n%s\n",test.id,test.msg);
 
 }

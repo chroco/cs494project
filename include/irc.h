@@ -18,7 +18,7 @@ typedef struct {
 	int test[2];
 } TestPacket;
 
-#define PACKET_SIZE 	(1<<8)
+#define PACKET_SIZE 	(1<<9)
 #define MSG_SIZE 			PACKET_SIZE-sizeof(uint32_t)
 
 typedef struct{
