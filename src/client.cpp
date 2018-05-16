@@ -25,14 +25,11 @@ void IRCClient::helloSocket(){
 
   /*---- Read the message from the server into the buffer ----*/
 	IRCPacket recv_buf,test;
-	uint32_t uint32_t_buf=0,testint=1;
 	char rcvbuf[MSG_SIZE]={0};
 	char msgbuf[MSG_SIZE]={0};
 	printf("rcvbuf[0]:  %c\n",rcvbuf[0]);
 	recv(clientSocket,&rcvbuf,sizeof(char)*MSG_SIZE,0);
 	printf("rcvbuf[0]:  %c\n",rcvbuf[0]);
-	//recv(clientSocket,&uint32_t_buf, PACKET_SIZE, 0);
-	//recv(clientSocket,&recv_buf, PACKET_SIZE, 0);
 
 
   printf("Data received: %s\n",rcvbuf);

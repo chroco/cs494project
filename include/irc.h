@@ -39,14 +39,11 @@ class IRC{
 
 		void serializeIRCPacket(IRCPacket *dest,IRCPacket *src);
 		void deserializeIRCPacket(IRCPacket *dest,IRCPacket *src);
-		void serialize_uint32_t(uint32_t *dest,uint32_t src);
-		void deserialize_uint32_t(uint32_t *dest,uint32_t src);
-		void serialize_msg(char *dest,char *src);
-		void deserialize_msg(char *dest,char *src);
 
-		template<class Archive>
-		void serialize(Archive & archive);
-		void testSerializer();
+		void uint32_t_to_char4(char *dst,uint32_t src);
+		void char4_to_uin32_t(uint32_t *dst, char *src);
+		void serialize_msg(char *dst,char *src);
+		void deserialize_msg(char *dst,char *src);
 	
 	protected:
 		char buffer[PACKET_SIZE];

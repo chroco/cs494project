@@ -78,37 +78,14 @@ void IRCServer::helloSocket(){
   /*---- serialize ----*/
 
 	IRCPacket test = {42u,{"hello test packet!\0"}};
-	uint32_t uint32_t_buf=0;
 	char sendbuf[MSG_SIZE]={0};
 	char testbuf[MSG_SIZE]={0};
-//	serialize_uint32_t(&uint32_t_buf,test.id);
 	printf("%s\n",test.msg);
-	serialize_msg(sendbuf,test.msg);
-	deserialize_msg(testbuf,sendbuf);
   printf("serialized data: %s\n",testbuf);
-	//serializeIRCPacket(&send_buf,&test);
 
   /*---- Send message to the socket of the incoming connection ----*/
 
 	send(newSocket,sendbuf,sizeof(char)*MSG_SIZE,0);
-	//send(newSocket,&uint32_t_buf,PACKET_SIZE,0);
-	//send(newSocket,&send_buf,PACKET_SIZE,0);
 
 }
-/*
-#include <stdio.h>
-#include <arpa/inet.h>
-#include <string.h>
 
-int main() {
-    unsigned int number = 175;
-
-    unsigned int number2 = htonl(number);
-    char numberStr[4];
-    memcpy(numberStr, &number2, 4);
-
-    printf("%x %x %x %x\n", numberStr[0], numberStr[1], numberStr[2], numberStr[3]);
-
-    return 0;
-}
-//*/
