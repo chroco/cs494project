@@ -77,6 +77,7 @@ class Test{
 		int test_DLL_createNode();
 		int test_wordSerialization();
 		int test_charArraySerialization();
+		int test_packetSerialization();
 		// integration tests
 		int test_IRC();
 		int test_Server();

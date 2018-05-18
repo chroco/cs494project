@@ -73,6 +73,32 @@ int Test::test_charArraySerialization(){
 	return EXIT_SUCCESS;
 }
 
+int Test::test_packetSerialization(){
+	IRC *pIRC = new IRC();
+	IRCPacket msg = {42u,{"Hello Serializer!\0"}},
+						res = {0,0};
+	char buffer[sizeof(IRCPacket)] = {0};	
+	printf("msg: %u\n",msg.p.id);
+	printf("msg: %s\n",msg.p.msg);
+	pIRC->serialize_packet(buffer,msg.serial);
+	printf("msg after serialization: %u\n",msg.p.id);
+	printf("msg after serialization: %s\n",msg.p.msg);
+	pIRC->deserialize_packet(res.serial,buffer);
+	printf("msg after deserialization: %u\n",msg.p.id);
+	printf("msg after deserialization: %s\n",msg.p.msg);
+	fprintf(stderr,"res: %u\n",res.p.id);
+	fprintf(stderr,"res: %s\n",res.p.msg);
+	delete pIRC;
+	if(msg.p.id != res.p.id){
+		fprintf(stderr,"(%u,%u) id not equal!\n",msg.p.id,res.p.id );
+		return EXIT_FAILURE;
+	}
+	if(strncmp(msg.p.msg,res.p.msg,PACKET_SIZE)){
+		fprintf(stderr,"msg not equal!\n");
+		return EXIT_FAILURE;
+	}
+	return EXIT_SUCCESS;
+}
 
 
 int Test::test_DLL_insertNode(){

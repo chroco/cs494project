@@ -10,7 +10,6 @@
 #include <cereal/archives/json.hpp>
 #include <cereal/types/vector.hpp>
 
-#define BUFFER_SIZE (1<<10) 
 #define HOME "127.0.0.1"
 #define PORT 7891
 
@@ -18,12 +17,19 @@ typedef struct {
 	int test[2];
 } TestPacket;
 
-#define PACKET_SIZE 	(1<<9)
-#define MSG_SIZE 			PACKET_SIZE-sizeof(uint32_t)
+#define MSG_SIZE		(1<<9) - sizeof(uint32_t)			
 
-typedef struct{
-	uint32_t id;
-	char msg[MSG_SIZE];
+typedef struct {
+		uint32_t id;
+		char msg[MSG_SIZE];
+}packet;
+
+#define PACKET_SIZE	sizeof(packet) 
+#define BUFFER_SIZE PACKET_SIZE 
+
+typedef union{
+	packet p;
+	char serial[PACKET_SIZE];
 }IRCPacket;
 
 typedef struct{
@@ -39,6 +45,10 @@ class IRC{
 
 		void serializeIRCPacket(char *dest,IRCPacket *src);
 		void deserializeIRCPacket(IRCPacket *dest,char *src);
+
+
+		void serialize_packet(char *dst,char *src);
+		void deserialize_packet(char *dst,char *src);
 
 		void serialize_uint32_t(uint32_t *dst,uint32_t src);
 		void deserialize_uint32_t(uint32_t *dst,uint32_t src);

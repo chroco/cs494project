@@ -13,6 +13,7 @@ int main(int argc,char *argv[]){
 	TEST_ASSERT_INT_EQ(pTest->test_Client_searchName(), EXIT_SUCCESS);
 	TEST_ASSERT_INT_EQ(pTest->test_wordSerialization(), EXIT_SUCCESS);
 	TEST_ASSERT_INT_EQ(pTest->test_charArraySerialization(), EXIT_SUCCESS);
+	TEST_ASSERT_INT_EQ(pTest->test_packetSerialization(), EXIT_SUCCESS);
 	// ********* Integration Testing *********** //
 	printf("All tests passed!\n");
 	delete pTest;

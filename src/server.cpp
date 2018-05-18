@@ -64,29 +64,31 @@ void IRCServer::helloSocket(){
   memset(serverAddr.sin_zero, '\0', sizeof serverAddr.sin_zero);  
 
   /*---- Bind the address struct to the socket ----*/
-  bind(welcomeSocket, (struct sockAddr *) &serverAddr, sizeof(serverAddr));
+//	bind(welcomeSocket, (struct sockAddr *) &serverAddr, sizeof(serverAddr));
+	bind(welcomeSocket, (struct sockaddr *) &serverAddr, sizeof(serverAddr));
 
-  if(listen(welcomesocket,5)==0)
+  if(listen(welcomeSocket,5)==0)
     printf("listening\n");
   else
     printf("error\n");
 
   /*---- accept call creates a new socket for the incoming connection ----*/
-  addr_size = sizeof serverstorage;
-  newsocket = accept(welcomeSocket, (struct sockaddr *) &serverstorage, &addr_size);
+  addr_size = sizeof serverStorage;
+  newSocket = accept(welcomeSocket, (struct sockaddr *) &serverStorage, &addr_size);
 
   /*---- serialize ----*/
 
-	ircpacket test = {42u,{"hello test packet!\0"}};
-	char sendbuf[packet_size]={0};
+	IRCPacket test = {42u,{"hello test packet!\0"}};
+	char sendbuf[PACKET_SIZE]={0};
 //	printf("%s\n",test.msg);
 	//serialize_msg(sendbuf,test.msg);	
-	serializeIRCPacket(sendbuf,test);	
+	serialize_packet(sendbuf,test.serial);	
+//	serializeIRCPacket(sendbuf,&test);	
 //  printf("serialized data: %s\n",sendbuf);
 
   /*---- send message to the socket of the incoming connection ----*/
 
-	send(newsocket,sendbuf,sizeof(PACKET_SIZE),0);
+	send(newSocket,sendbuf,sizeof(PACKET_SIZE),0);
 	//send(newSocket,sendbuf,sizeof(char)*MSG_SIZE,0);
 
 }
