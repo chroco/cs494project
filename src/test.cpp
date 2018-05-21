@@ -77,7 +77,8 @@ int Test::test_packetSerialization(){
 	IRC *pIRC = new IRC();
 	IRCPacket msg = {42u,{"Hello Serializer!\0"}},
 						res = {0,0};
-	char buffer[sizeof(IRCPacket)] = {0};	
+	char buffer[IRC_PACKET_SIZE] = {0};	
+	printf("calling Test::test_packetSerialization()\n");
 	printf("msg: %u\n",msg.p.id);
 	printf("msg: %s\n",msg.p.msg);
 	pIRC->serialize_packet(buffer,msg.serial);
@@ -100,6 +101,33 @@ int Test::test_packetSerialization(){
 	return EXIT_SUCCESS;
 }
 
+int Test::test_serializeIRCPacket(){
+	IRC *pIRC = new IRC();
+	IRCPacket msg = {42u,{"Hello Serializer!\0"}},
+						res = {0,0};
+	char buffer[IRC_PACKET_SIZE] = {0};	
+	printf("calling Test::test_serializeIRCPacket()\n");
+	fprintf(stderr,"msg: %u\n",msg.p.id);
+	fprintf(stderr,"msg: %s\n",msg.p.msg);
+	pIRC->serializeIRCPacket(buffer,&msg);
+	pIRC->deserializeIRCPacket(&res,buffer);
+	fprintf(stderr,"res: %u\n",res.p.id);
+	fprintf(stderr,"res: %s\n",res.p.msg);
+	if(msg.p.id != res.p.id){
+		fprintf(stderr,"(%u,%u) id not equal!\n",msg.p.id,res.p.id );
+		return EXIT_FAILURE;
+	}
+	if(strncmp(msg.p.msg,res.p.msg,PACKET_SIZE)){
+		fprintf(stderr,"msg not equal!\n");
+		return EXIT_FAILURE;
+	}delete pIRC;
+	return EXIT_SUCCESS;
+}
+
+int Test::test_deserializeIRCPacket(){
+
+	return EXIT_SUCCESS;
+}
 
 int Test::test_DLL_insertNode(){
 	DLL *pDLL = new DLL();
@@ -279,6 +307,16 @@ int Test::test_Client_searchName(){
 	delete pClients;
 //*/
 	fprintf(stderr,"test_Channel_searchNode() passed!\n");
+	return EXIT_SUCCESS;
+}
+
+int Test::test_addClient(){
+	ClientList *pClients = new ClientList();
+	pClients->addClient(5);
+	pClients->addClient(7);
+	pClients->printList();
+	
+	delete pClients;
 	return EXIT_SUCCESS;
 }
 

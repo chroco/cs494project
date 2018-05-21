@@ -2,9 +2,9 @@
 
 int main(int argc,char *argv[]){
 	IRCServer *pServer = new IRCServer();
-	pServer->getStats();
-	pServer->helloSocket();
-//	pServer->welcome();
+//	pServer->getStats();
+//	pServer->helloSocket();
+	pServer->welcome();
 
 	delete pServer;
 	return 0;

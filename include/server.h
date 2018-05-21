@@ -14,6 +14,7 @@ class IRCServer : public IRC{
 		void getStats();
 	private:
 		ChannelList *pChannels;
+		ClientList *pClients;
 		int welcomeSocket, newSocket;
 		struct sockaddr_storage serverStorage;
 };

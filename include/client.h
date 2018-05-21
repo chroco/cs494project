@@ -8,6 +8,7 @@ class IRCClient : public IRC{
 		IRCClient();
 		~IRCClient();
 		void helloSocket();
+		void requestConnection();
 	private:
 		int clientSocket;
 };

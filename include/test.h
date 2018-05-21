@@ -25,6 +25,13 @@
     return EXIT_FAILURE; \
   }}
 
+#define TEST_ASSERT_UINT32_EQ(FUNC, SHOULD_BE) { \
+  uint32_t res = FUNC; \
+  if (res != SHOULD_BE) { \
+    TEST_ASSERT_PRINT(FUNC, PRIi32, res, SHOULD_BE) \
+    return EXIT_FAILURE; \
+  }}
+
 #define TEST_ASSERT_INT_EQ(FUNC, SHOULD_BE) { \
   int res = FUNC; \
   if (res != SHOULD_BE) { \
@@ -37,6 +44,14 @@
   if (res != SHOULD_BE) { \
     dprintf(STDERR_FILENO, \
        "%s: " #FUNC " pointers should be equal\n", __func__); \
+    return EXIT_FAILURE; \
+  }}
+
+#define TEST_ASSERT_CSTRING_EQ(FUNC, SHOULD_BE,SIZE) { \
+  char *res = FUNC; \
+  if (strncmp(SHOULD_BE,res,SIZE) { \
+    dprintf(STDERR_FILENO, \
+       "%s: " #FUNC " cstrings should be equal\n", __func__); \
     return EXIT_FAILURE; \
   }}
 
@@ -78,6 +93,9 @@ class Test{
 		int test_wordSerialization();
 		int test_charArraySerialization();
 		int test_packetSerialization();
+		int test_serializeIRCPacket();
+		int test_deserializeIRCPacket();
+		int test_addClient();
 		// integration tests
 		int test_IRC();
 		int test_Server();

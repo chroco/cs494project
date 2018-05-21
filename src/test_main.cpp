@@ -14,6 +14,8 @@ int main(int argc,char *argv[]){
 	TEST_ASSERT_INT_EQ(pTest->test_wordSerialization(), EXIT_SUCCESS);
 	TEST_ASSERT_INT_EQ(pTest->test_charArraySerialization(), EXIT_SUCCESS);
 	TEST_ASSERT_INT_EQ(pTest->test_packetSerialization(), EXIT_SUCCESS);
+	TEST_ASSERT_INT_EQ(pTest->test_serializeIRCPacket(), EXIT_SUCCESS);
+	TEST_ASSERT_INT_EQ(pTest->test_addClient(), EXIT_SUCCESS);
 	// ********* Integration Testing *********** //
 	printf("All tests passed!\n");
 	delete pTest;

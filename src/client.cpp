@@ -4,6 +4,26 @@ IRCClient::IRCClient():clientSocket(0){}
 
 IRCClient::~IRCClient(){}
 
+void IRCClient::requestConnection(){
+	clientSocket = socket(PF_INET, SOCK_STREAM, 0);
+  serverAddr.sin_family = AF_INET;
+  serverAddr.sin_port = htons(PORT);
+  serverAddr.sin_addr.s_addr = inet_addr(HOME);
+  memset(serverAddr.sin_zero, '\0', sizeof serverAddr.sin_zero);
+  addr_size = sizeof serverAddr;
+  connect(clientSocket, (struct sockaddr *) &serverAddr, addr_size);
+	
+	char recvbuf[5]={0};
+	int bytes_recv = recv(clientSocket,recvbuf,5,0);
+	if(bytes_recv < 0){
+		fprintf(stderr, "error receiving...");
+		return;
+	}
+	fprintf(stderr, "bytes_recv: %d\n",bytes_recv);
+	fprintf(stderr, "recvbuf: %s\n",recvbuf);
+	
+}
+
 void IRCClient::helloSocket(){
   /*---- Create the socket. The three arguments are: ----*/
   /* 1) Internet domain 2) Stream socket 3) Default protocol (TCP in this case) */
@@ -25,18 +45,18 @@ void IRCClient::helloSocket(){
 
   /*---- Read the message from the server into the buffer ----*/
 	IRCPacket test;
-	char recvbuf[PACKET_SIZE]={0};
-	recv(clientSocket,recvbuf,sizeof(PACKET_SIZE),0);
-//	printf("rcvbuf[0]:  %c\n",rcvbuf[0]);
- // printf("Data received: %s\n",rcvbuf);
-  /*---- deserialze ----*/
-//		deserialize_uint32_t(&testint,uint32_t_buf);
-//	deserializeIRCPacket(&test,recvbuf);	
-	deserialize_packet(test.serial,recvbuf);	
+	char recvbuf[IRC_PACKET_SIZE]={0};
+	int bytes_recv = recv(clientSocket,recvbuf,IRC_PACKET_SIZE,0);
+	if(bytes_recv < 0){
+		fprintf(stderr, "error receiving...");
+		return;
+	}
+	fprintf(stderr, "bytes_recv: %d\n",bytes_recv);
+
+	/*---- Deserialize message ----*/
+	deserializeIRCPacket(&test,recvbuf);	
   
 	/*---- Print the received message ----*/
-//  printf("Data received: %u\n",testint);
-//  printf("Data deserialized: %s\n",msgbuf);
 	printf("%u\n%s\n",test.p.id,test.p.msg);
 
 }

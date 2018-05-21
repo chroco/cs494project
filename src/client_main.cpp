@@ -2,7 +2,8 @@
 
 int main(int argc,char *argv[]){
 	IRCClient *pClient = new IRCClient();
-	pClient->helloSocket();
+//	pClient->helloSocket();
+	pClient->requestConnection();
 	delete pClient;
 	return 0;
 }

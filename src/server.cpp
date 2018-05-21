@@ -4,41 +4,44 @@
 IRCServer::IRCServer():pChannels(NULL),welcomeSocket(0),newSocket(0){
 	memset(&serverStorage, 0, sizeof(serverStorage));
 	pChannels = new ChannelList();
+	pClients = new ClientList();
 }
 
 IRCServer::~IRCServer(){
-//	delete pChannels;
+	delete pChannels;
+	delete pClients;
 }
 
 void IRCServer::welcome(){
-  welcomeSocket = socket(PF_INET, SOCK_STREAM, 0);
+  int bytes_sent=0;
+	char sendbuf[5] = "ack\0";
+	welcomeSocket = socket(PF_INET, SOCK_STREAM, 0);
   serverAddr.sin_family = AF_INET;
   serverAddr.sin_port = htons(PORT);
   serverAddr.sin_addr.s_addr = inet_addr(HOME);
   memset(serverAddr.sin_zero, '\0', sizeof serverAddr.sin_zero);  
   bind(welcomeSocket, (struct sockaddr *) &serverAddr, sizeof(serverAddr));
-
-  if(listen(welcomeSocket,5)==0)
+	
+	
+	while(listen(welcomeSocket,5)==0){
     printf("Listening\n");
-  else
-    printf("Error\n");
+  	newSocket = accept(welcomeSocket, (struct sockaddr *) &serverStorage, &addr_size);
+  	addr_size = sizeof serverStorage;
+    printf("Request received, adding client\nsocket: %d\n",newSocket);
+		pClients->addClient(newSocket);
+		pClients->printList();
+/*
+		bytes_sent=send(newSocket,sendbuf,5,0);
+		if(bytes_sent < 0){
+			fprintf(stderr, "error sending...");
+			return;
+		}
+		fprintf(stderr, "bytes_sent: %d\n",bytes_sent);
+//*/
+		newSocket = 0;
+	}
 
-  addr_size = sizeof serverStorage;
-  newSocket = accept(welcomeSocket, (struct sockaddr *) &serverStorage, &addr_size);
-
-	std::stringstream ss;
-
-	cereal::JSONOutputArchive oarchive( ss );
- // bool arr[] = {true, false};
- // std::vector<int> vec = {1, 2, 3, 4, 5};
- // oarchive( CEREAL_NVP(vec),arr );
-	TestPacket test;
-	test.test[0]=9;
-	test.test[1]=0;
-  oarchive(test.test[0],test.test[1]);
-
-	strcpy(buffer, ss.str().c_str());
-  send(newSocket,buffer,BUFFER_SIZE,0);
+//  send(newSocket,buffer,BUFFER_SIZE,0);
 }
 
 
@@ -78,18 +81,21 @@ void IRCServer::helloSocket(){
 
   /*---- serialize ----*/
 
-	IRCPacket test = {42u,{"hello test packet!\0"}};
-	char sendbuf[PACKET_SIZE]={0};
-//	printf("%s\n",test.msg);
-	//serialize_msg(sendbuf,test.msg);	
-	serialize_packet(sendbuf,test.serial);	
-//	serializeIRCPacket(sendbuf,&test);	
-//  printf("serialized data: %s\n",sendbuf);
-
+	IRCPacket test = {42u,{"hello test packet!\0"}},
+						des_test = {0,0};
+	char sendbuf[IRC_PACKET_SIZE]={0};
+	printf("%u\n%s\n",test.p.id,test.p.msg);
+	serializeIRCPacket(sendbuf,&test);	
+	deserializeIRCPacket(&des_test,sendbuf);	
+	printf("%u\n%s\n",des_test.p.id,des_test.p.msg);
   /*---- send message to the socket of the incoming connection ----*/
-
-	send(newSocket,sendbuf,sizeof(PACKET_SIZE),0);
-	//send(newSocket,sendbuf,sizeof(char)*MSG_SIZE,0);
-
+	int bytes_sent = 0;
+	bytes_sent=send(newSocket,sendbuf,IRC_PACKET_SIZE,0);
+	
+	if(bytes_sent < 0){
+		fprintf(stderr, "error sending...");
+		return;
+	}
+	fprintf(stderr, "bytes_sent: %d\n",bytes_sent);
 }
 
