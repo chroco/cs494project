@@ -75,23 +75,23 @@ int Test::test_charArraySerialization(){
 
 int Test::test_packetSerialization(){
 	IRC *pIRC = new IRC();
-	IRCPacket msg = {42u,{"Hello Serializer!\0"}},
-						res = {0,0};
+	IRCPacket msg = {42u,0,0,{"Hello Serializer!\0"}},
+						res = {0,0,0,0};
 	char buffer[IRC_PACKET_SIZE] = {0};	
 	printf("calling Test::test_packetSerialization()\n");
-	printf("msg: %u\n",msg.p.id);
+	printf("msg: %u\n",msg.p.length);
 	printf("msg: %s\n",msg.p.msg);
 	pIRC->serialize_packet(buffer,msg.serial);
-	printf("msg after serialization: %u\n",msg.p.id);
+	printf("msg after serialization: %u\n",msg.p.length);
 	printf("msg after serialization: %s\n",msg.p.msg);
 	pIRC->deserialize_packet(res.serial,buffer);
-	printf("msg after deserialization: %u\n",msg.p.id);
+	printf("msg after deserialization: %u\n",msg.p.length);
 	printf("msg after deserialization: %s\n",msg.p.msg);
-	fprintf(stderr,"res: %u\n",res.p.id);
+	fprintf(stderr,"res: %u\n",res.p.length);
 	fprintf(stderr,"res: %s\n",res.p.msg);
 	delete pIRC;
-	if(msg.p.id != res.p.id){
-		fprintf(stderr,"(%u,%u) id not equal!\n",msg.p.id,res.p.id );
+	if(msg.p.length != res.p.length){
+		fprintf(stderr,"(%u,%u) id not equal!\n",msg.p.length,res.p.length);
 		return EXIT_FAILURE;
 	}
 	if(strncmp(msg.p.msg,res.p.msg,PACKET_SIZE)){
@@ -103,18 +103,18 @@ int Test::test_packetSerialization(){
 
 int Test::test_serializeIRCPacket(){
 	IRC *pIRC = new IRC();
-	IRCPacket msg = {42u,{"Hello Serializer!\0"}},
-						res = {0,0};
+	IRCPacket msg = {42u,0,0,{"Hello Serializer!\0"}},
+						res = {0,0,0,0};
 	char buffer[IRC_PACKET_SIZE] = {0};	
 	printf("calling Test::test_serializeIRCPacket()\n");
-	fprintf(stderr,"msg: %u\n",msg.p.id);
+	fprintf(stderr,"msg: %u\n",msg.p.length);
 	fprintf(stderr,"msg: %s\n",msg.p.msg);
 	pIRC->serializeIRCPacket(buffer,&msg);
 	pIRC->deserializeIRCPacket(&res,buffer);
-	fprintf(stderr,"res: %u\n",res.p.id);
+	fprintf(stderr,"res: %u\n",res.p.length);
 	fprintf(stderr,"res: %s\n",res.p.msg);
-	if(msg.p.id != res.p.id){
-		fprintf(stderr,"(%u,%u) id not equal!\n",msg.p.id,res.p.id );
+	if(msg.p.length != res.p.length){
+		fprintf(stderr,"(%u,%u) id not equal!\n",msg.p.length,res.p.length );
 		return EXIT_FAILURE;
 	}
 	if(strncmp(msg.p.msg,res.p.msg,PACKET_SIZE)){

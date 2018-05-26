@@ -4,11 +4,15 @@
 #include "irc.h"
 #include "channel.h"
 
+
+
 class IRCServer : public IRC{
 	public:
 		IRCServer();
 		~IRCServer();
 		void welcome();
+		void epoll_welcome();
+		void select_welcome();
 		void respond();
 		void helloSocket();
 		void getStats();

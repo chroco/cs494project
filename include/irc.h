@@ -5,17 +5,26 @@
 #include <sys/socket.h>
 #include <string.h>
 #include <arpa/inet.h>
+#include <sys/types.h>	
+#include <netinet/in.h>	
+#include <netdb.h>			
+#include <sys/time.h>		
+#include <unistd.h>			
 
 #include <iostream>
+
+#define	BUFLEN	1024	/* buffer length 	   */
 
 #define HOME "127.0.0.1"
 #define PORT 7891
 
-#define MSG_SIZE		(1<<9) - sizeof(uint32_t)			
+#define MSG_SIZE		(1<<10) - 3*sizeof(uint32_t)			
 
 typedef struct {
-		uint32_t id;
-		char msg[MSG_SIZE];
+	uint32_t length;
+	uint32_t op_code;
+	uint32_t error_code;
+	char msg[MSG_SIZE];
 }packet;
 
 #define PACKET_SIZE	sizeof(packet) 
