@@ -163,12 +163,13 @@ Node *DLL::searchName(char *name){
 	}
 	pTemp=pHead;
 	while(pTemp){
-		if(strcmp(pTemp->getName(),name)){
+		if(strcmp(pTemp->getName(),name)==0){
 			fprintf(stderr,"%s found!\n",name);
 			return pTemp;
 		}
 		pTemp=pTemp->getNext();
 	}
+	fprintf(stderr,"%s not found!\n",name);
 	return NULL;
 }
 

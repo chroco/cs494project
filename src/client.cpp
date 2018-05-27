@@ -4,10 +4,34 @@ IRCClient::IRCClient():clientSocket(0){}
 
 IRCClient::~IRCClient(){}
 
+int receive_basic(char *chunk,int s)
+{
+    int size_recv , total_size= 0;
+    //char chunk[CHUNK_SIZE];
+     
+    //loop
+    while(1)
+    {
+        memset(chunk ,0 , IRC_PACKET_SIZE);  //clear the variable
+        if((size_recv =  recv(s , chunk , IRC_PACKET_SIZE , 0) ) < 0)
+        {
+            break;
+        }
+        else
+        {
+            total_size += size_recv;
+            printf("%s" , chunk);
+        }
+    }
+     
+    return total_size;
+}
+
+
 int IRCClient::joinServer(){
-	IRCPacket test = {0u,0u,0u,{"hello test packet!\0"}},
-						irc_msg = {0,0,0,0},
-						echo = {0,0,0,0};
+//	IRCPacket test = {0u,0u,0u,{"hello test packet!\0"}},
+		IRCPacket	irc_msg = {0,0,0,0},
+							echo = {0,0,0,0};
 	char eom='\0',
 			 *cmd[CMD_SIZE]={NULL},
 			 sendbuf[IRC_PACKET_SIZE]={0},
@@ -39,7 +63,7 @@ int IRCClient::joinServer(){
 
 	//keep communicating with server
 	while(1){
-		printf("Enter message : ");
+		printf("Type things: ");
 		scanf("%2000[^\n]%c", message,&eom);
 		eom='\0';
 
@@ -48,43 +72,43 @@ int IRCClient::joinServer(){
 		
 			char* token = strtok(message, " ");
 			for(i=0;token!=NULL;++i){
-				printf("token: %s\n",token);
+	//			printf("token: %s\n",token);
 				cmd[i]=token;
 				token = strtok(NULL," ");
 			}
-			printf("cmd[0]: %s\n",cmd[0]);
-			printf("cmd[1][0]: %c\n",cmd[1][0]);
-			if(strcmp(cmd[0],"/join")==0&&cmd[1]!=NULL&&cmd[1][0]=='#'){
-				irc_msg.p.op_code=1;
+		//	printf("cmd[0]: %s\n",cmd[0]);
+	//		printf("cmd[1][0]: %c\n",cmd[1][0]);
+			if(strcmp(cmd[0],command[JOIN])==0&&cmd[1]!=NULL&&cmd[1][0]=='#'){
+				irc_msg.p.op_code=JOIN;
 				strcpy(irc_msg.p.msg,cmd[1]);
-			}//else{
-			//	fprintf(stderr,"/join command format error!\n");
-			//	continue;
-		//	}
-			else if(strcmp(cmd[0],"/part")==0&&cmd[1]!=NULL&&cmd[1][0]=='#'){
-				irc_msg.p.op_code=2;
+			}else if(strcmp(cmd[0],command[PART])==0&&cmd[1]!=NULL&&cmd[1][0]=='#'){
+				irc_msg.p.op_code=PART;
 				strcpy(irc_msg.p.msg,cmd[1]);
 			}else{
 				fprintf(stderr,"command format error!\n");
 				continue;
 			}
 		}else{
-			
+			continue;	
 		}
 
 		memset(&message,0,sizeof(message));
+		
 		//Send some data
 		serializeIRCPacket(sendbuf,&irc_msg);	
-		//serializeIRCPacket(sendbuf,&test);	
 		bytes_sent=send(sock,sendbuf,IRC_PACKET_SIZE,0);
-		if(bytes_sent < 0){
-			fprintf(stderr, "error sending...");
+		if(bytes_sent != IRC_PACKET_SIZE){
+			fprintf(stderr, "error sending...\n");
 		}
+		
+		//sleep(1);
 
 		//Receive a reply from the server
+//		memset(&recvbuf,0,sizeof(recvbuf));
 		bytes_recv = recv(sock,recvbuf,IRC_PACKET_SIZE,0);
-		if(bytes_recv < 0){
-			fprintf(stderr, "error receiving...");
+// 		bytes_recv=receive_basic(recvbuf,sock);
+		if(bytes_recv != IRC_PACKET_SIZE){
+			fprintf(stderr, "error receiving...\n");
 		}
 
 		deserializeIRCPacket(&echo,recvbuf);	

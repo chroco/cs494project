@@ -50,6 +50,7 @@ class ChannelList:public DLL{
 	public:
 		ChannelList();
 		int addChannel(char *name);
+		int removeChannel(char *name);
 		ChannelNode *createNode();
 		ChannelNode *createNode(char *name);
 		void printList();

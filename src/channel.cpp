@@ -36,25 +36,33 @@ ClientNode *ClientList::searchSocket(int socket){
 	pTemp=(ClientNode *)pHead;
 	while(pTemp){
 		tmp_socket=pTemp->getSocket();
-		fprintf(stderr,"socket: %d\n",tmp_socket);
+		fprintf(stderr,"socket: (%d,%d)\n",tmp_socket,socket);
 		if(tmp_socket==socket){
 			fprintf(stderr,"socket found!\n");
 			return pTemp;
 		}
 		pTemp=(ClientNode *)pTemp->getNext();
 	}
-	fprintf(stderr,"id not found!\n");
+	fprintf(stderr,"socket not found!\n");
 	return NULL;
 }
 
 void ClientList::printList(){
-	ClientNode *pNode = (ClientNode *)pHead;
+	ClientNode *pNode = (ClientNode *)pHead,
+						 *pExternal = NULL;
 	if(!pNode){
-		printf("list is empty!\n");
+		printf("ClientList is empty!\n");
 		return;
 	}
 	while(pNode){
-		printf("node_id: %u, socket: %d\n",pNode->getNodeID(),pNode->getSocket());
+		pExternal=(ClientNode *)pNode->getExternal();
+		if(pExternal){
+			printf("clientNode_id: %u, socket: %d, name: %s\n",
+					pExternal->getNodeID(),pExternal->getSocket(),pExternal->getName());
+		}else{
+			printf("clientNode_id: %u, socket: %d, name: %s\n",
+					pNode->getNodeID(),pNode->getSocket(),pNode->getName());
+		}
 		pNode=(ClientNode *)pNode->getNext();
 	}
 }
@@ -82,18 +90,22 @@ ClientNode *ClientList::createNode(ClientNode *pClientNode){
 	return new ClientNode(node_id,pClientNode);
 }
 
-// ****** Channel code ******
+// ****** ChannelNode ******
 
-ChannelNode::ChannelNode():Node(),pClients(NULL){
+ChannelNode::ChannelNode():Node(){
 	pClients = new ClientList();
 }
 
-ChannelNode::ChannelNode(unsigned int id):Node(id){}
+ChannelNode::ChannelNode(unsigned int id):Node(id){
+	pClients = new ClientList();
+}
 
-ChannelNode::ChannelNode(unsigned int id,char *n):Node(id,n){}
+ChannelNode::ChannelNode(unsigned int id,char *n):Node(id,n){
+	pClients = new ClientList();
+}
 
 void ChannelNode::printList(){
-	pClients->printList();
+	if(pClients)pClients->printList();
 }
 
 int ChannelNode::addClient(ClientNode *pClientNode){
@@ -103,6 +115,8 @@ int ChannelNode::addClient(ClientNode *pClientNode){
 ChannelNode::~ChannelNode(){
 	delete pClients;
 }
+
+// ********ChannelList*****************
 
 ChannelList::ChannelList():DLL(){}
 
@@ -120,13 +134,22 @@ void ChannelList::printList(){
 		return;
 	}
 	while(pNode){
-		printf("node_id: %u, name: %s\n",pNode->getNodeID(),pNode->getName());
+		printf("ChannelNode_id: %u, name: %s\n",pNode->getNodeID(),pNode->getName());
 		pNode=(ChannelNode *)pNode->getNext();
 	}
 }
 
 int ChannelList::addChannel(char *name){
 	return insertNode(createNode(name));
+}
+
+int ChannelList::removeChannel(char *name){
+	Node *pNode = (Node *)searchName(name);
+	if(!pNode){
+		return 1;
+	}
+	removeNode(pNode);
+	return 0;
 }
 
 ChannelNode *ChannelList::createNode(char *name){

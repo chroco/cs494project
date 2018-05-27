@@ -20,6 +20,8 @@ class Node{
 		Node *getNext();
 		int setPrev(Node *pNode);
 		int setNext(Node *pNode);
+		Node *getExternal();
+		int setExternal(Node *pNode);
 		unsigned int getNodeID();
 		char *getName();
 	protected:

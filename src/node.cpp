@@ -49,6 +49,15 @@ int Node::setPrev(Node *pNode){
 	return 0; 
 }
 
+Node *Node::getExternal(){
+	return pExternal;	
+}
+
+int Node::setExternal(Node *pNode){
+	pExternal=pNode;
+	return 0;
+}
+
 unsigned int Node::getNodeID(){
 	return node_id;
 }

@@ -4,8 +4,6 @@
 #include "irc.h"
 #include "channel.h"
 
-
-
 class IRCServer : public IRC{
 	public:
 		IRCServer();

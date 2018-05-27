@@ -31,12 +31,22 @@ typedef struct {
 #define PACKET_SIZE	sizeof(packet) 
 #define BUFFER_SIZE PACKET_SIZE 
 
+enum{
+	NOP=0,
+	JOIN,
+	PART
+};
+
+//const char *command[];
+
 typedef union{
 	packet p;
 	char serial[PACKET_SIZE];
 }IRCPacket;
 
 #define IRC_PACKET_SIZE sizeof(IRCPacket)
+
+extern const char *command[];
 
 class IRC{
 	public:

@@ -1,5 +1,4 @@
 #include "server.h"
-//#include "channel.h"
 
 IRCServer::IRCServer():pChannels(NULL),welcomeSocket(0),newSocket(0){
 	memset(&serverStorage, 0, sizeof(serverStorage));
@@ -14,7 +13,8 @@ IRCServer::~IRCServer(){
 
 void IRCServer::welcome(){
 	IRCPacket test = {0u,0u,0u,{"lolololololz!\0"}},
-						irc_msg = {0,0,0,0};
+						irc_msg = {0,0,0,0},
+						des_test = {0,0,0,0};
 	char sendbuf[IRC_PACKET_SIZE]={0},
 			 recvbuf[IRC_PACKET_SIZE]={0};
 	
@@ -52,7 +52,7 @@ void IRCServer::welcome(){
 	size_csa = sizeof(csa);
 	dsize = getdtablesize();
 	
-	for (i=3; i<dsize; i++){
+	for (i=3; i<dsize; ++i){
 		if (i != s){
 			close(i);
 		}
@@ -76,21 +76,20 @@ void IRCServer::welcome(){
 
 			/* add the new socket to the set of open sockets */
 			FD_SET(cs, &rfd);
-			pClients->addClient(newSocket);
+			pClients->addClient(cs);
 			pClients->printList();
 			/* and loop again */
 			continue;
 		}
-
-		for (i=3; i<dsize; i++){
+		for (i=3; i<dsize; ++i){
 			if (i != s && FD_ISSET(i, &c_rfd)){
 				/* read from the socket */
-				//rc = read(i, buf, BUFLEN);
 				rc = recv(i,recvbuf,IRC_PACKET_SIZE,0);
 				fprintf(stderr, "bytes_recv: %d\n",rc);
 				/* if client closed the connection... */
 				if (rc == 0) {
 					/* close the socket */
+					fprintf(stderr, "closing the socket\n");
 					close(i);
 					FD_CLR(i, &rfd);
 				}else {/* if there was data to read */
@@ -100,43 +99,41 @@ void IRCServer::welcome(){
 							irc_msg.p.length,irc_msg.p.op_code,irc_msg.p.error_code,irc_msg.p.msg
 					);
 					switch(irc_msg.p.op_code){
-						case 1:
+						case JOIN:
 						{
 							ChannelNode *pChannelNode = (ChannelNode *)pChannels->searchName(irc_msg.p.msg);
 							if(!pChannelNode){
 								pChannels->addChannel(irc_msg.p.msg);
-								//pChannels->getHead();
 								pChannelNode=(ChannelNode *)pChannels->getHead();
 							}else{
-								printf("channel already exists!\n");
+								printf("channel %s already exists!\n",pChannelNode->getName());
 							}
-							/*
-							ClientNode *pClientNode = (ClientNode *)pClients->searchID(i);
+							ClientNode *pClientNode = (ClientNode *)pClients->searchSocket(i);
 							if(pClientNode){
+								printf("found client, adding to channel!\n");
 								pChannelNode->addClient(pClientNode);
 							}
-							//*/
 							if(pChannelNode)pChannelNode->printList();
 							pChannels->printList();
-						}
-							break;
-						case 2:
-
+						} break;
+						case PART:
+							pChannels->removeChannel(irc_msg.p.msg);
+							pChannels->printList();
 							break;
 						default:
 							break;
 					}
 					memset(&irc_msg,0,sizeof(irc_msg));
 					serializeIRCPacket(sendbuf,&test);	
-				//	deserializeIRCPacket(&des_test,sendbuf);	
-				//	printf("%u\n%s\n",des_test.p.id,des_test.p.msg);
-					int bytes_sent = 0;
-					bytes_sent=send(i,sendbuf,IRC_PACKET_SIZE,0);
-					
+					int bytes_sent=send(i,sendbuf,IRC_PACKET_SIZE,0);
 					if(bytes_sent < 0){
 						fprintf(stderr, "error sending...");
 						return;
 					}
+					deserializeIRCPacket(&des_test,sendbuf);	
+					printf("sending %u,%u,%u\n%s\n",
+							des_test.p.length,des_test.p.op_code,des_test.p.error_code,des_test.p.msg
+					);
 					fprintf(stderr, "bytes_sent: %d\n",bytes_sent);
 				}
 			}
