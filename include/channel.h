@@ -12,6 +12,7 @@ class ClientNode:public Node{
 		ClientNode(unsigned int id);
 		ClientNode(unsigned int id,int socket);
  		ClientNode(unsigned int id,char *n);
+		ClientNode(unsigned int id,ClientNode *pClientNode);
 		int getSocket();
  		~ClientNode();
 	private:
@@ -24,8 +25,11 @@ class ClientList:public DLL{
 		ClientList();
 		void printList();
 		int addClient(int socket);
+		int addClient(ClientNode *pClientNode);
+		ClientNode *searchSocket(int socket);
 		ClientNode *createNode();
 		ClientNode *createNode(int socket);
+		ClientNode *createNode(ClientNode *pClientNode);
 		~ClientList();
 	private:
 };
@@ -35,6 +39,8 @@ class ChannelNode:public Node{
 		ChannelNode();
 		ChannelNode(unsigned int id);
 		ChannelNode(unsigned int id,char *n);
+		void printList();
+		int addClient(ClientNode *pClientNode);
 		~ChannelNode();
 	private:
 		ClientList *pClients;
@@ -43,7 +49,10 @@ class ChannelNode:public Node{
 class ChannelList:public DLL{
 	public:
 		ChannelList();
+		int addChannel(char *name);
 		ChannelNode *createNode();
+		ChannelNode *createNode(char *name);
+		void printList();
 		~ChannelList();
 	private:
 };

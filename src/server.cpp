@@ -13,11 +13,13 @@ IRCServer::~IRCServer(){
 }
 
 void IRCServer::welcome(){
-	IRCPacket test = {0u,0u,0u,{"lolololololz!\0"}};
-	char sendbuf[IRC_PACKET_SIZE]={0};
+	IRCPacket test = {0u,0u,0u,{"lolololololz!\0"}},
+						irc_msg = {0,0,0,0};
+	char sendbuf[IRC_PACKET_SIZE]={0},
+			 recvbuf[IRC_PACKET_SIZE]={0};
 	
 	int	i,rc,s,cs,dsize; 
-	char buf[BUFLEN+1];  
+//	char buf[BUFLEN+1];  
 	struct sockaddr_in sa; 
 	struct sockaddr_in csa;
 	socklen_t size_csa;
@@ -34,7 +36,7 @@ void IRCServer::welcome(){
 		perror("socket: allocation failed");
 	}
 
-	rc = bind(s, (struct sockaddr *)&sa, sizeof(sa));
+	rc = bind(s,(struct sockaddr *)&sa,sizeof(sa));
 
 	if (rc) {
 		perror("bind");
@@ -83,7 +85,9 @@ void IRCServer::welcome(){
 		for (i=3; i<dsize; i++){
 			if (i != s && FD_ISSET(i, &c_rfd)){
 				/* read from the socket */
-				rc = read(i, buf, BUFLEN);
+				//rc = read(i, buf, BUFLEN);
+				rc = recv(i,recvbuf,IRC_PACKET_SIZE,0);
+				fprintf(stderr, "bytes_recv: %d\n",rc);
 				/* if client closed the connection... */
 				if (rc == 0) {
 					/* close the socket */
@@ -91,6 +95,38 @@ void IRCServer::welcome(){
 					FD_CLR(i, &rfd);
 				}else {/* if there was data to read */
 					/* echo it back to the client */
+					deserializeIRCPacket(&irc_msg,recvbuf);
+					printf("%u,%u,%u\n%s\n",
+							irc_msg.p.length,irc_msg.p.op_code,irc_msg.p.error_code,irc_msg.p.msg
+					);
+					switch(irc_msg.p.op_code){
+						case 1:
+						{
+							ChannelNode *pChannelNode = (ChannelNode *)pChannels->searchName(irc_msg.p.msg);
+							if(!pChannelNode){
+								pChannels->addChannel(irc_msg.p.msg);
+								//pChannels->getHead();
+								pChannelNode=(ChannelNode *)pChannels->getHead();
+							}else{
+								printf("channel already exists!\n");
+							}
+							/*
+							ClientNode *pClientNode = (ClientNode *)pClients->searchID(i);
+							if(pClientNode){
+								pChannelNode->addClient(pClientNode);
+							}
+							//*/
+							if(pChannelNode)pChannelNode->printList();
+							pChannels->printList();
+						}
+							break;
+						case 2:
+
+							break;
+						default:
+							break;
+					}
+					memset(&irc_msg,0,sizeof(irc_msg));
 					serializeIRCPacket(sendbuf,&test);	
 				//	deserializeIRCPacket(&des_test,sendbuf);	
 				//	printf("%u\n%s\n",des_test.p.id,des_test.p.msg);

@@ -12,6 +12,7 @@ class Node{
 		Node();
 		Node(unsigned int id);
 		Node(unsigned int id,char *n);
+		Node(unsigned int id,Node *ext);
 		Node(Node *prev,Node *next,unsigned int id);
 		virtual ~Node();
 
@@ -24,6 +25,7 @@ class Node{
 	protected:
 		Node *pPrev;
 		Node *pNext;
+		Node *pExternal;
 		unsigned int node_id;
 		char name[NAME_LENGTH];
 		
