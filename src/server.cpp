@@ -37,14 +37,12 @@ void IRCServer::welcome(){
 	}
 
 	rc = bind(s,(struct sockaddr *)&sa,sizeof(sa));
-
 	if (rc) {
 		perror("bind");
 	}
 
 	printf("listening...\n");
 	rc = listen(s, 5);
-
 	if (rc) {
 		perror("listen");
 	}
@@ -74,26 +72,20 @@ void IRCServer::welcome(){
 				continue;
 			}
 
-			/* add the new socket to the set of open sockets */
 			FD_SET(cs, &rfd);
 			pClients->addClient(cs);
 			pClients->printList();
-			/* and loop again */
 			continue;
 		}
 		for (i=3; i<dsize; ++i){
 			if (i != s && FD_ISSET(i, &c_rfd)){
-				/* read from the socket */
 				rc = recv(i,recvbuf,IRC_PACKET_SIZE,0);
 				fprintf(stderr, "bytes_recv: %d\n",rc);
-				/* if client closed the connection... */
 				if (rc == 0) {
-					/* close the socket */
 					fprintf(stderr, "closing the socket\n");
 					close(i);
 					FD_CLR(i, &rfd);
-				}else {/* if there was data to read */
-					/* echo it back to the client */
+				}else { 
 					deserializeIRCPacket(&irc_msg,recvbuf);
 					printf("%u,%u,%u\n%s\n",
 							irc_msg.p.length,irc_msg.p.op_code,irc_msg.p.error_code,irc_msg.p.msg
@@ -108,7 +100,7 @@ void IRCServer::welcome(){
 							}else{
 								printf("channel %s already exists!\n",pChannelNode->getName());
 							}
-							/*
+							//*
 							ClientNode *pClientNode = (ClientNode *)pClients->searchSocket(i);
 							if(pClientNode){
 								printf("found client, adding to channel!\n");
@@ -119,8 +111,8 @@ void IRCServer::welcome(){
 							pChannels->printList();
 						} break;
 						case PART:
-						//	pChannels->removeChannel(irc_msg.p.msg);
-						//	pChannels->printList();
+							pChannels->removeChannel(irc_msg.p.msg);
+							pChannels->printList();
 							break;
 						default:
 							break;
