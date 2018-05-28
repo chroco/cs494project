@@ -1,3 +1,9 @@
+scratch/*
+a.out
+client
+server
+test
+compile_commands.json 
 *.swp
 *.swo
 
