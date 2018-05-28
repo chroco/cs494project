@@ -8,8 +8,8 @@ ClientNode::ClientNode(unsigned int id):Node(id),client_socket(0){}
 
 ClientNode::ClientNode(unsigned int id,int socket)
 	:Node(id),client_socket(socket){
-	char sendbuf[5] = "ack\0";
-	send(client_socket,sendbuf,5,0);
+//	char sendbuf[5] = "ack\0";
+//	send(client_socket,sendbuf,5,0);
 }
 
 ClientNode::ClientNode(unsigned int id,char *n):Node(id,n){}
@@ -21,6 +21,8 @@ int ClientNode::getSocket(){
 }	
 	
 ClientNode::~ClientNode(){}
+
+// ****** ClinetList code ******
 
 ClientList::ClientList():DLL(){}
 
@@ -82,7 +84,7 @@ ClientNode *ClientList::createNode(ClientNode *pClientNode){
 	return new ClientNode(node_id,pClientNode);
 }
 
-// ****** Channel code ******
+// ****** ChannelNode code ******
 
 ChannelNode::ChannelNode():Node(),pClients(NULL){
 	pClients = new ClientList();
