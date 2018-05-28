@@ -8,6 +8,8 @@ ClientNode::ClientNode(unsigned int id):Node(id),client_socket(0){}
 
 ClientNode::ClientNode(unsigned int id,int socket)
 	:Node(id),client_socket(socket){
+	char client[]="Client\0";
+	setName(client);
 //	char sendbuf[5] = "ack\0";
 //	send(client_socket,sendbuf,5,0);
 }

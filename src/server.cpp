@@ -13,8 +13,7 @@ IRCServer::~IRCServer(){
 
 void IRCServer::welcome(){
 	IRCPacket test = {0u,0u,0u,{"lolololololz!\0"}},
-						irc_msg = {0,0,0,0};//,
-//						des_test = {0,0,0,0};
+						irc_msg = {0,0,0,0};
 	char sendbuf[IRC_PACKET_SIZE]={0},
 			 recvbuf[IRC_PACKET_SIZE]={0};
 	
@@ -73,7 +72,7 @@ void IRCServer::welcome(){
 
 			FD_SET(cs, &rfd);
 			pClients->addClient(cs);
-			pClients->printList();
+//			pClients->printList();
 			continue;
 		}
 		for (i=3; i<dsize; ++i){
@@ -86,57 +85,10 @@ void IRCServer::welcome(){
 					FD_CLR(i, &rfd);
 				}else { 
 					deserializeIRCPacket(&irc_msg,recvbuf);
-					printf("%u,%u,%u\n%s\n",
+					printf("%u,%u,%u\n%s\n\n",
 							irc_msg.p.length,irc_msg.p.op_code,irc_msg.p.error_code,irc_msg.p.msg
 					);
 					handlePacket(&irc_msg,i);
-					/*
-					switch(irc_msg.p.op_code){
-						case JOIN:{
-							if(irc_msg.p.msg[0]!='#'){
-								printf("/join %s rejected!\n",irc_msg.p.msg);
-								break;
-							}
-							ChannelNode *pChannelNode;
-							pChannelNode = (ChannelNode *)pChannels->searchName(irc_msg.p.msg);
-							if(!pChannelNode){
-								pChannels->addChannel(irc_msg.p.msg);
-								pChannelNode=(ChannelNode *)pChannels->getHead();
-							}else{
-								printf("channel %s already exists!\n",pChannelNode->getName());
-							}
-							ClientNode *pClientNode = (ClientNode *)pClients->searchSocket(i);
-							if(pClientNode){
-								printf("found client, adding to channel!\n");
-								pChannelNode->addClient(pClientNode);
-							}
-						}	break;
-						case PART:
-							if(irc_msg.p.msg[0]=='#'){
-								pChannels->removeChannel(irc_msg.p.msg);
-							}
-							break;
-						case LIST:{
-							if(irc_msg.p.msg[0]=='#'){
-								ChannelNode *pChannelNode;
-								pChannelNode = (ChannelNode *)pChannels->searchName(irc_msg.p.msg);
-								if(pChannelNode){
-									pChannelNode->printList();
-								}
-							}else{
-								pChannels->printList();
-							}
-						} break;
-						case NICK:{
-							ClientNode *pClientNode = (ClientNode *)pClients->searchSocket(i);
-							if(pClientNode){
-								pClientNode->setName(irc_msg.p.msg);
-							}
-						} break;
-						default:
-							break;
-					}
-					//*/
 					memset(&irc_msg,0,sizeof(irc_msg));
 					serializeIRCPacket(sendbuf,&test);	
 					int bytes_sent=send(i,sendbuf,IRC_PACKET_SIZE,0);
@@ -189,9 +141,13 @@ void IRCServer::handlePacket(IRCPacket *pIRCPacket,int socket){
 			}
 		} break;
 		case NICK:{
-			ClientNode *pClientNode = (ClientNode *)pClients->searchSocket(socket);
-			if(pClientNode){
-				pClientNode->setName(pIRCPacket->p.msg);
+			if(pIRCPacket->p.msg[0]!='#'){
+				ClientNode *pClientNode = (ClientNode *)pClients->searchSocket(socket);
+				if(pClientNode){
+					pClientNode->setName(pIRCPacket->p.msg);
+				}
+			}else{
+				fprintf(stderr,"Illegal Nickname: %s\n",pIRCPacket->p.msg);
 			}
 		} break;
 		default:

@@ -87,20 +87,6 @@ int IRCClient::joinServer(){
 					irc_msg.p.op_code=i;
 				}
 			}
-			/*
-			if(strcmp(cmd[0],command[JOIN])==0){
-				irc_msg.p.op_code=JOIN;
-			}else if(strcmp(cmd[0],command[PART])==0){
-				irc_msg.p.op_code=PART;
-			}else if(strcmp(cmd[0],command[LIST])==0){
-				irc_msg.p.op_code=LIST;
-			}else if(strcmp(cmd[0],command[NICK])==0){
-				irc_msg.p.op_code=NICK;
-			}else{
-				fprintf(stderr,"command format error!\n");
-				continue;
-			}
-			//*/
 			if(cmd[1]){
 				strcpy(irc_msg.p.msg,cmd[1]);
 			}
