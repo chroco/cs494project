@@ -13,8 +13,8 @@ IRCServer::~IRCServer(){
 
 void IRCServer::welcome(){
 	IRCPacket test = {0u,0u,0u,{"lolololololz!\0"}},
-						irc_msg = {0,0,0,0},
-						des_test = {0,0,0,0};
+						irc_msg = {0,0,0,0};//,
+//						des_test = {0,0,0,0};
 	char sendbuf[IRC_PACKET_SIZE]={0},
 			 recvbuf[IRC_PACKET_SIZE]={0};
 	
@@ -108,17 +108,19 @@ void IRCServer::welcome(){
 							}else{
 								printf("channel %s already exists!\n",pChannelNode->getName());
 							}
+							/*
 							ClientNode *pClientNode = (ClientNode *)pClients->searchSocket(i);
 							if(pClientNode){
 								printf("found client, adding to channel!\n");
 								pChannelNode->addClient(pClientNode);
 							}
+							//*/
 							if(pChannelNode)pChannelNode->printList();
 							pChannels->printList();
 						} break;
 						case PART:
-							pChannels->removeChannel(irc_msg.p.msg);
-							pChannels->printList();
+						//	pChannels->removeChannel(irc_msg.p.msg);
+						//	pChannels->printList();
 							break;
 						default:
 							break;
@@ -130,10 +132,10 @@ void IRCServer::welcome(){
 						fprintf(stderr, "error sending...");
 						return;
 					}
-					deserializeIRCPacket(&des_test,sendbuf);	
-					printf("sending %u,%u,%u\n%s\n",
-							des_test.p.length,des_test.p.op_code,des_test.p.error_code,des_test.p.msg
-					);
+		//			deserializeIRCPacket(&des_test,sendbuf);	
+		//			printf("sending %u,%u,%u\n%s\n",
+		//					des_test.p.length,des_test.p.op_code,des_test.p.error_code,des_test.p.msg
+		//			);
 					fprintf(stderr, "bytes_sent: %d\n",bytes_sent);
 				}
 			}
