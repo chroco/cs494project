@@ -1,9 +1,11 @@
 #include "irc.h"
 
 const char *command[] = {
-	"nop",
+	"/ping",
 	"/join",
-	"/part"
+	"/part",
+	"/list",
+	"/nick"
 };
 
 IRC::IRC():buffer{0},addr_size(0){

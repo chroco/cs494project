@@ -66,3 +66,12 @@ char *Node::getName(){
 	return name;
 }
 
+int Node::setName(char *n){
+	int i=0;
+	for(;i<NAME_LENGTH && n[i] != '\0';++i){
+		name[i]=n[i];
+	}
+	name[i]='\0';
+	return 0;
+}
+

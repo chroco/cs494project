@@ -81,7 +81,7 @@ void IRCServer::welcome(){
 				rc = recv(i,recvbuf,IRC_PACKET_SIZE,0);
 				fprintf(stderr, "bytes_recv: %d\n",rc);
 				if (rc == 0) {
-					fprintf(stderr, "closing the socket\n");
+					fprintf(stderr, "closing socket %d\n",i);
 					close(i);
 					FD_CLR(i, &rfd);
 				}else { 
@@ -89,33 +89,54 @@ void IRCServer::welcome(){
 					printf("%u,%u,%u\n%s\n",
 							irc_msg.p.length,irc_msg.p.op_code,irc_msg.p.error_code,irc_msg.p.msg
 					);
+					handlePacket(&irc_msg,i);
+					/*
 					switch(irc_msg.p.op_code){
-						case JOIN:
-						{
-							ChannelNode *pChannelNode = (ChannelNode *)pChannels->searchName(irc_msg.p.msg);
+						case JOIN:{
+							if(irc_msg.p.msg[0]!='#'){
+								printf("/join %s rejected!\n",irc_msg.p.msg);
+								break;
+							}
+							ChannelNode *pChannelNode;
+							pChannelNode = (ChannelNode *)pChannels->searchName(irc_msg.p.msg);
 							if(!pChannelNode){
 								pChannels->addChannel(irc_msg.p.msg);
 								pChannelNode=(ChannelNode *)pChannels->getHead();
 							}else{
 								printf("channel %s already exists!\n",pChannelNode->getName());
 							}
-							//*
 							ClientNode *pClientNode = (ClientNode *)pClients->searchSocket(i);
 							if(pClientNode){
 								printf("found client, adding to channel!\n");
 								pChannelNode->addClient(pClientNode);
 							}
-							//*/
-							if(pChannelNode)pChannelNode->printList();
-							pChannels->printList();
-						} break;
+						}	break;
 						case PART:
-							pChannels->removeChannel(irc_msg.p.msg);
-							pChannels->printList();
+							if(irc_msg.p.msg[0]=='#'){
+								pChannels->removeChannel(irc_msg.p.msg);
+							}
 							break;
+						case LIST:{
+							if(irc_msg.p.msg[0]=='#'){
+								ChannelNode *pChannelNode;
+								pChannelNode = (ChannelNode *)pChannels->searchName(irc_msg.p.msg);
+								if(pChannelNode){
+									pChannelNode->printList();
+								}
+							}else{
+								pChannels->printList();
+							}
+						} break;
+						case NICK:{
+							ClientNode *pClientNode = (ClientNode *)pClients->searchSocket(i);
+							if(pClientNode){
+								pClientNode->setName(irc_msg.p.msg);
+							}
+						} break;
 						default:
 							break;
 					}
+					//*/
 					memset(&irc_msg,0,sizeof(irc_msg));
 					serializeIRCPacket(sendbuf,&test);	
 					int bytes_sent=send(i,sendbuf,IRC_PACKET_SIZE,0);
@@ -129,6 +150,55 @@ void IRCServer::welcome(){
 		}
 	}
 }
+
+void IRCServer::handlePacket(IRCPacket *pIRCPacket,int socket){
+	switch(pIRCPacket->p.op_code){
+		case JOIN:{
+			if(pIRCPacket->p.msg[0]!='#'){
+				printf("/join %s rejected!\n",pIRCPacket->p.msg);
+				break;
+			}
+			ChannelNode *pChannelNode;
+			pChannelNode = (ChannelNode *)pChannels->searchName(pIRCPacket->p.msg);
+			if(!pChannelNode){
+				pChannels->addChannel(pIRCPacket->p.msg);
+				pChannelNode=(ChannelNode *)pChannels->getHead();
+			}else{
+				printf("channel %s already exists!\n",pChannelNode->getName());
+			}
+			ClientNode *pClientNode = (ClientNode *)pClients->searchSocket(socket);
+			if(pClientNode){
+				printf("found client, adding to channel!\n");
+				pChannelNode->addClient(pClientNode);
+			}
+		}	break;
+		case PART:
+			if(pIRCPacket->p.msg[0]=='#'){
+				pChannels->removeChannel(pIRCPacket->p.msg);
+			}
+			break;
+		case LIST:{
+			if(pIRCPacket->p.msg[0]=='#'){
+				ChannelNode *pChannelNode;
+				pChannelNode = (ChannelNode *)pChannels->searchName(pIRCPacket->p.msg);
+				if(pChannelNode){
+					pChannelNode->printList();
+				}
+			}else{
+				pChannels->printList();
+			}
+		} break;
+		case NICK:{
+			ClientNode *pClientNode = (ClientNode *)pClients->searchSocket(socket);
+			if(pClientNode){
+				pClientNode->setName(pIRCPacket->p.msg);
+			}
+		} break;
+		default:
+			break;
+	}
+}
+
 void IRCServer::getStats(){
 	printf("sizeof(IRCPacket): %zu\n",sizeof(IRCPacket));
 	printf("sizeof(buffer): %zu\n",sizeof(buffer));

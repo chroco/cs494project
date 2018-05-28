@@ -32,9 +32,12 @@ typedef struct {
 #define BUFFER_SIZE PACKET_SIZE 
 
 enum{
-	NOP=0,
+	PING=0,
 	JOIN,
-	PART
+	PART,
+	LIST,
+	NICK,
+	END_OF_COMMANDS
 };
 
 //const char *command[];

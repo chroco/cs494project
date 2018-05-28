@@ -24,6 +24,7 @@ class Node{
 		int setExternal(Node *pNode);
 		unsigned int getNodeID();
 		char *getName();
+		int setName(char *n);
 	protected:
 		Node *pPrev;
 		Node *pNext;

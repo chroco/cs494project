@@ -69,22 +69,40 @@ int IRCClient::joinServer(){
 		eom='\0';
 
 		if(message[0]=='/'){
-			printf("Issuing command!\n");
+			printf("Issuing command: ");
 		
 			char* token = strtok(message, " ");
 			for(i=0;token!=NULL;++i){
+				printf("%s ",token);
 				cmd[i]=token;
 				token = strtok(NULL," ");
 			}
-			if(strcmp(cmd[0],command[JOIN])==0&&cmd[1]!=NULL&&cmd[1][0]=='#'){
+			printf("\n");
+			for(int i=0;i<=END_OF_COMMANDS;++i){
+				if(i==END_OF_COMMANDS){
+					fprintf(stderr,"command format error!\n");
+					continue;
+				}
+				if(strcmp(cmd[0],command[i])==0){
+					irc_msg.p.op_code=i;
+				}
+			}
+			/*
+			if(strcmp(cmd[0],command[JOIN])==0){
 				irc_msg.p.op_code=JOIN;
-				strcpy(irc_msg.p.msg,cmd[1]);
-			}else if(strcmp(cmd[0],command[PART])==0&&cmd[1]!=NULL&&cmd[1][0]=='#'){
+			}else if(strcmp(cmd[0],command[PART])==0){
 				irc_msg.p.op_code=PART;
-				strcpy(irc_msg.p.msg,cmd[1]);
+			}else if(strcmp(cmd[0],command[LIST])==0){
+				irc_msg.p.op_code=LIST;
+			}else if(strcmp(cmd[0],command[NICK])==0){
+				irc_msg.p.op_code=NICK;
 			}else{
 				fprintf(stderr,"command format error!\n");
 				continue;
+			}
+			//*/
+			if(cmd[1]){
+				strcpy(irc_msg.p.msg,cmd[1]);
 			}
 		}else{
 			continue;	

@@ -9,10 +9,9 @@ class IRCServer : public IRC{
 		IRCServer();
 		~IRCServer();
 		void welcome();
-		void epoll_welcome();
-		void select_welcome();
 		void getStats();
 	private:
+		void handlePacket(IRCPacket *pIRCPacket,int socket);
 		ChannelList *pChannels;
 		ClientList *pClients;
 		int welcomeSocket, newSocket;
