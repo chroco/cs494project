@@ -88,9 +88,13 @@ ChannelNode::ChannelNode():Node(),pClients(NULL){
 	pClients = new ClientList();
 }
 
-ChannelNode::ChannelNode(unsigned int id):Node(id){}
+ChannelNode::ChannelNode(unsigned int id):Node(id){
+	pClients = new ClientList();
+}
 
-ChannelNode::ChannelNode(unsigned int id,char *n):Node(id,n){}
+ChannelNode::ChannelNode(unsigned int id,char *n):Node(id,n){
+	pClients = new ClientList();
+}
 
 void ChannelNode::printList(){
 	pClients->printList();

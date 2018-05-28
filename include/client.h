@@ -7,9 +7,6 @@ class IRCClient : public IRC{
 	public:
 		IRCClient();
 		~IRCClient();
-		void helloSocket();
-		void requestConnection();
-		int base_joinServer();
 		int joinServer();
 	private:
 		int clientSocket;
