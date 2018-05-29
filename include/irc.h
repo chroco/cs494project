@@ -18,7 +18,7 @@
 #define HOME "127.0.0.1"
 #define PORT 7891
 
-#define MSG_SIZE	(1<<10) - 3*sizeof(uint32_t)			
+#define MSG_SIZE	int((1<<10) - 3*sizeof(uint32_t))			
 #define CMD_SIZE	10	
 
 typedef struct {
@@ -37,6 +37,7 @@ enum{
 	PART,
 	LIST,
 	NICK,
+	MSG,
 	END_OF_COMMANDS
 };
 

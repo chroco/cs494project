@@ -114,6 +114,10 @@ int ChannelNode::addClient(ClientNode *pClientNode){
 	return pClients->addClient(pClientNode);
 }
 
+ClientNode *ChannelNode::searchName(char *n){
+	return (ClientNode *)pClients->searchName(n);
+}
+
 ChannelNode::~ChannelNode(){
 	delete pClients;
 }
@@ -127,6 +131,20 @@ ChannelList::~ChannelList(){}
 ChannelNode *ChannelList::createNode(){
 	++node_count;
 	return new ChannelNode(node_id);
+}
+
+void ChannelList::printList(char *n){
+	ChannelNode *pNode = (ChannelNode *)pHead;
+	if(!pNode){
+		printf("list is empty!\n");
+		return;
+	}
+	while(pNode){
+		if(pNode->searchName(n)){
+			printf("ChannelNode_id: %u, name: %s\n",pNode->getNodeID(),pNode->getName());
+		}
+		pNode=(ChannelNode *)pNode->getNext();
+	}
 }
 
 void ChannelList::printList(){

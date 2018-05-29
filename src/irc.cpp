@@ -5,7 +5,8 @@ const char *command[] = {
 	"/join",
 	"/part",
 	"/list",
-	"/nick"
+	"/nick",
+	"/msg"
 };
 
 IRC::IRC():buffer{0},addr_size(0){

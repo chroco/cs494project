@@ -81,10 +81,10 @@ int IRCClient::joinServer(){
 			for(int i=0;i<=END_OF_COMMANDS;++i){
 				if(i==END_OF_COMMANDS){
 					fprintf(stderr,"command format error!\n");
-					continue;
 				}
 				if(strcmp(cmd[0],command[i])==0){
 					irc_msg.p.op_code=i;
+					break;
 				}
 			}
 			if(cmd[1]){

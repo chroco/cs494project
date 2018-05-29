@@ -137,7 +137,12 @@ void IRCServer::handlePacket(IRCPacket *pIRCPacket,int socket){
 					pChannelNode->printList();
 				}
 			}else{
-				pChannels->printList();
+				if(!pIRCPacket->p.msg[0]){
+					pChannels->printList();
+				}else if(pClients->searchName(pIRCPacket->p.msg)){
+					printf("Printing channels containing %s\n",pIRCPacket->p.msg);
+					pChannels->printList(pIRCPacket->p.msg);
+				}
 			}
 		} break;
 		case NICK:{
@@ -148,6 +153,35 @@ void IRCServer::handlePacket(IRCPacket *pIRCPacket,int socket){
 				}
 			}else{
 				fprintf(stderr,"Illegal Nickname: %s\n",pIRCPacket->p.msg);
+			}
+		} break;
+		case MSG:{
+			if(pIRCPacket->p.msg[0]!='#'){
+				int i,j;
+				IRCPacket msg = {0,0,0,0};
+				char buf[MSG_SIZE] = {0},
+						 sendbuf[IRC_PACKET_SIZE] = {0};
+				for(i=0;i<MSG_SIZE && pIRCPacket->p.msg[i] != ' ';++i){
+					buf[i] = pIRCPacket->p.msg[i];
+				}
+				pIRCPacket->p.msg[i] = '\0';
+
+				ClientNode *pClientNode = (ClientNode *)pClients->searchName(buf);
+				if(pClientNode){
+				//	++i;
+					for(j=0;i<MSG_SIZE && pIRCPacket->p.msg[i] != '\0';++i,++j){
+						msg.p.msg[j]=buf[i];
+					}
+					msg.p.msg[j] = '\0';
+					msg.p.length = 13;
+					serializeIRCPacket(sendbuf,&msg);	
+					int bytes_sent=send(pClientNode->getSocket(),sendbuf,IRC_PACKET_SIZE,0);
+					if(bytes_sent < 0){
+						fprintf(stderr, "error sending...");
+						return;
+					}
+					fprintf(stderr, "bytes_sent: %d\n",bytes_sent);
+				}
 			}
 		} break;
 		default:

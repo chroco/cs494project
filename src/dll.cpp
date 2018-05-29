@@ -157,12 +157,19 @@ Node *DLL::searchID(unsigned int id){
 }
 
 Node *DLL::searchName(char *name){
-	Node *pTemp = NULL;
+	Node *pTemp = NULL, *pExt = NULL;
 	if(!pHead){
 		return NULL;
 	}
 	pTemp=pHead;
 	while(pTemp){
+		pExt=pTemp->getExternal();
+		if(pExt){
+			if(strcmp(pExt->getName(),name)==0){
+				fprintf(stderr,"%s found!\n",name);
+				return pTemp;
+			}
+		}
 		if(strcmp(pTemp->getName(),name)==0){
 			fprintf(stderr,"%s found!\n",name);
 			return pTemp;

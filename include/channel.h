@@ -41,6 +41,7 @@ class ChannelNode:public Node{
 		ChannelNode(unsigned int id,char *n);
 		void printList();
 		int addClient(ClientNode *pClientNode);
+		ClientNode *searchName(char *n);
 		~ChannelNode();
 	private:
 		ClientList *pClients;
@@ -54,6 +55,7 @@ class ChannelList:public DLL{
 		ChannelNode *createNode();
 		ChannelNode *createNode(char *name);
 		void printList();
+		void printList(char *n);
 		~ChannelList();
 	private:
 };
