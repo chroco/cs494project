@@ -4,11 +4,11 @@ SERVER_BIN=server
 CLIENT_BIN=client
 TEST_BIN=test
 
-CLIENT_CFLAGS=
+CLIENT_CFLAGS= -lpthread 
 SERVER_CFLAGS=
 TEST_CFLAGS=
 FLAGS=-I ./include -g -Wall -Wextra \
-			-std=c++11 -Wno-unused-parameter
+			-std=c++11 -Wno-unused-parameter 
 
 INC= ./include
 SRC= ./src

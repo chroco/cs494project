@@ -1,4 +1,5 @@
 #include "client.h"
+#include <pthread.h>
 
 IRCClient::IRCClient():clientSocket(0){}
 
@@ -29,19 +30,53 @@ int receive_basic(char *chunk,int s)
 }
 //*/
 
+void *IRCClient::recvMessage(void *ptr){
+	IRCPacket echo = {0,0,0,0};
+	char recvbuf[IRC_PACKET_SIZE]={0};
+	int bytes_recv = 0,
+			*sock = (int *)ptr;
+
+	while(1){
+		//Receive a reply from the server
+		bytes_recv = recv(*sock,recvbuf,IRC_PACKET_SIZE,0);
+		if(bytes_recv != IRC_PACKET_SIZE){
+			fprintf(stderr, "error receiving...\n");
+		}
+
+		deserializeIRCPacket(&echo,recvbuf);	
+		printf("\nbytes_recv: %d\n",bytes_recv);
+		printf("%u,%u,%u\n%s\n",
+				echo.p.length,echo.p.op_code,echo.p.error_code,echo.p.msg
+		);
+		printf("Type things o_0: ");
+		memset(&echo,0,IRC_PACKET_SIZE);
+		memset(&recvbuf,0,IRC_PACKET_SIZE);
+	}
+}
+
+IRCClient *pIRCClient;
+
+void *recvMessageWrapper(void *ptr){
+	pIRCClient->recvMessage(ptr);
+	return NULL;
+}
+
 int IRCClient::joinServer(){
 //	IRCPacket test = {0u,0u,0u,{"hello test packet!\0"}},
-		IRCPacket	irc_msg = {0,0,0,0},
-							echo = {0,0,0,0};
+	IRCPacket	irc_msg = {0,0,0,0};
+//							echo = {0,0,0,0};
 	char eom='\0',
 			 *cmd[CMD_SIZE]={NULL},
-			 sendbuf[IRC_PACKET_SIZE]={0},
-			 recvbuf[IRC_PACKET_SIZE]={0};
-	int bytes_sent = 0, bytes_recv = 0;
+			 sendbuf[IRC_PACKET_SIZE]={0};
+//			 recvbuf[IRC_PACKET_SIZE]={0};
+	int bytes_sent = 0;//, bytes_recv = 0;
 
 	int sock,i;
 	struct sockaddr_in server;
-	char message[BUFLEN+1]={0};
+	char message[BUFLEN]={0},
+			 tokenize[BUFLEN]={0};
+	pthread_t recv_thread;
+
 
 	//Create socket
 	sock = socket(AF_INET , SOCK_STREAM , 0);
@@ -62,16 +97,25 @@ int IRCClient::joinServer(){
 
 	puts("Connected\n");
 
+	if(pthread_create(&recv_thread,NULL,recvMessageWrapper,&sock)){
+		fprintf(stderr,"Cannot create thread...\n");
+		return 1;
+	}
+
 	//keep communicating with server
+	printf("Type things o_0: ");
 	while(1){
-		printf("Type things o_0: ");
 		scanf("%2000[^\n]%c", message,&eom);
 		eom='\0';
 
-		if(message[0]=='/'){
+		for(int i=0;i<BUFLEN;++i){
+			tokenize[i]=message[i];
+		}
+
+		if(tokenize[0]=='/'){
 			printf("Issuing command: ");
 		
-			char* token = strtok(message, " ");
+			char* token = strtok(tokenize, " ");
 			for(i=0;token!=NULL;++i){
 				printf("%s ",token);
 				cmd[i]=token;
@@ -102,7 +146,8 @@ int IRCClient::joinServer(){
 		if(bytes_sent != IRC_PACKET_SIZE){
 			fprintf(stderr, "error sending...\n");
 		}
-
+		printf("bytes_sent: %d\n",bytes_sent);
+/*
 		//Receive a reply from the server
 		bytes_recv = recv(sock,recvbuf,IRC_PACKET_SIZE,0);
 		if(bytes_recv != IRC_PACKET_SIZE){
@@ -115,9 +160,11 @@ int IRCClient::joinServer(){
 		printf("%u,%u,%u\n%s\n",
 				echo.p.length,echo.p.op_code,echo.p.error_code,echo.p.msg
 		);
+
 		memset(&echo,0,IRC_PACKET_SIZE);
-		memset(&sendbuf,0,IRC_PACKET_SIZE);
 		memset(&recvbuf,0,IRC_PACKET_SIZE);
+//*/
+		memset(&sendbuf,0,IRC_PACKET_SIZE);
 	}
 
 	close(sock);
