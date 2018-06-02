@@ -18,6 +18,7 @@
 
 #define HOME "127.0.0.1"
 #define PORT 7891
+#define NAME_LEN 32
 
 #define MSG_SIZE	int((1<<10) - 3*sizeof(uint32_t))			
 #define CMD_SIZE	10	
@@ -68,6 +69,7 @@ class IRC{
 		void char4_to_uin32_t(uint32_t *dst, char *src);
 		void serialize_msg(char *dst,char *src);
 		void deserialize_msg(char *dst,char *src);
+		int truncateFirstWord(char *word,char *message,int size);
 	protected:
 		char buffer[PACKET_SIZE];
 		socklen_t addr_size;

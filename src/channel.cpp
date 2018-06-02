@@ -38,9 +38,9 @@ ClientNode *ClientList::searchSocket(int socket){
 	pTemp=(ClientNode *)pHead;
 	while(pTemp){
 		tmp_socket=pTemp->getSocket();
-		fprintf(stderr,"socket: (%d,%d)\n",tmp_socket,socket);
+//		fprintf(stderr,"socket: (%d,%d)\n",tmp_socket,socket);
 		if(tmp_socket==socket){
-			fprintf(stderr,"socket found!\n");
+//			fprintf(stderr,"socket found!\n");
 			return pTemp;
 		}
 		pTemp=(ClientNode *)pTemp->getNext();

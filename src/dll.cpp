@@ -166,12 +166,12 @@ Node *DLL::searchName(char *name){
 		pExt=pTemp->getExternal();
 		if(pExt){
 			if(strcmp(pExt->getName(),name)==0){
-				fprintf(stderr,"%s found!\n",name);
+		//		fprintf(stderr,"%s found!\n",name);
 				return pTemp;
 			}
 		}
 		if(strcmp(pTemp->getName(),name)==0){
-			fprintf(stderr,"%s found!\n",name);
+	//		fprintf(stderr,"%s found!\n",name);
 			return pTemp;
 		}
 		pTemp=pTemp->getNext();

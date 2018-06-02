@@ -74,3 +74,21 @@ void IRC::deserialize_msg(char *dst,char *src){
 	}
 }
 
+int IRC::truncateFirstWord(char *word,char *message,int size){
+	int i=0,j=0;
+//	printf("extracting first word in message: %s\n",message);
+	for(;i<size && message[i]!=' ' && message[i]!='\0';++i){
+		word[i]=message[i];	
+	}
+	++i;
+	word[i]='\0';
+//	printf("extracetd word: %s\n",word);
+
+//	printf("truncating first word in message: %s\n",message);
+	for(;i<MSG_SIZE && message[i]!='\0';++i,++j){
+		message[j]=message[i];	
+	}
+	message[j]='\0';
+//	printf("message after truncation: %s\n",message);
+	return 0;
+}
