@@ -18,6 +18,7 @@ class IRCServer : public IRC{
 		int listThings(IRCPacket *pIRCPacket,int socket);
 		int changeNick(IRCPacket *pIRCPacket,int socket);
 		int msgClient(IRCPacket *pIRCPacket,int socket);
+		int msgChannel(IRCPacket *pIRCPacket);
 		ChannelList *pChannels;
 		ClientList *pClients;
 		int welcomeSocket, newSocket;

@@ -69,7 +69,20 @@ void ClientList::printList(){
 	}
 }
 
+void addName(Node *pNode,char *list,int &i){
+	char *name=pNode->getName();
+	if(name){
+		printf("name: %s\n",name);
+		for(int j=0;i<MSG_SIZE && j<NAME_LENGTH && name[j] != '\0';++j,++i){
+			list[i]=name[j];	
+		}
+		list[i]=' ';
+		list[++i]='\0';
+	}
+}
+
 void ClientList::getList(char *list){
+	int i=0;
 	ClientNode *pNode = (ClientNode *)pHead,
 						 *pExternal = NULL;
 	if(!pNode){
@@ -81,13 +94,15 @@ void ClientList::getList(char *list){
 		if(pExternal){
 			printf("clientNode_id: %u, socket: %d, name: %s\n",
 					pExternal->getNodeID(),pExternal->getSocket(),pExternal->getName());
-
+			addName((Node *)pExternal,list,i);
 		}else{
 			printf("clientNode_id: %u, socket: %d, name: %s\n",
 					pNode->getNodeID(),pNode->getSocket(),pNode->getName());
+			addName(pNode,list,i);
 		}
 		pNode=(ClientNode *)pNode->getNext();
 	}
+	printf("list: %s\n",list);
 }
 
 int ClientList::addClient(int socket){
@@ -96,6 +111,31 @@ int ClientList::addClient(int socket){
 
 int ClientList::addClient(ClientNode *pClientNode){
 	return insertNode(createNode(pClientNode));
+}
+
+void ClientList::msgClients(IRCPacket *pIRCPacket){
+	IRCPacket reply = {0,0,0,0};
+	ClientNode *pNode = (ClientNode *)pHead,
+						 *pExternal = NULL;
+	char sendbuf[IRC_PACKET_SIZE] = {'\0'};
+	if(!pNode){
+		printf("ClientList is empty!\n");
+		char empty[]="ClientList is empty!\0";
+		strncpy(reply.p.msg,empty,MSG_SIZE);
+		send(,sendbuf,5,0);
+		return;
+	}
+	while(pNode){
+		pExternal=(ClientNode *)pNode->getExternal();
+		if(pExternal){
+			printf("clientNode_id: %u, socket: %d, name: %s\n",
+					pExternal->getNodeID(),pExternal->getSocket(),pExternal->getName());
+		}else{
+			printf("clientNode_id: %u, socket: %d, name: %s\n",
+					pNode->getNodeID(),pNode->getSocket(),pNode->getName());
+		}
+		pNode=(ClientNode *)pNode->getNext();
+	}
 }
 
 ClientNode *ClientList::createNode(){
@@ -143,6 +183,10 @@ ClientNode *ChannelNode::searchName(char *n){
 	return (ClientNode *)pClients->searchName(n);
 }
 
+void ChannelNode::msgChannel(IRCPacket *pIRCPacket){
+	if(pClients)pClients->msgClients(*pIRCPacket);
+}
+
 ChannelNode::~ChannelNode(){
 	delete pClients;
 }
@@ -172,6 +216,23 @@ void ChannelList::printList(char *n){
 	}
 }
 
+void ChannelList::getList(char *n,char *list){
+	int i=0;
+	ChannelNode *pNode = (ChannelNode *)pHead;
+	if(!pNode){
+		printf("list is empty!\n");
+		return;
+	}
+	while(pNode){
+		if(pNode->searchName(n)){
+			addName(pNode,list,i);
+			printf("ChannelNode_id: %u, name: %s\n",pNode->getNodeID(),pNode->getName());
+		}
+		pNode=(ChannelNode *)pNode->getNext();
+	}
+	printf("list: %s\n",list);
+}
+
 void ChannelList::printList(){
 	ChannelNode *pNode = (ChannelNode *)pHead;
 	if(!pNode){
@@ -185,23 +246,19 @@ void ChannelList::printList(){
 }
 
 void ChannelList::getList(char *list){
-	int i=0,j=0;
-	char *name=NULL;
+	int i=0;
+	char empty[]="Channel list is empty!\0";
 	ChannelNode *pNode = (ChannelNode *)pHead;
 	if(!pNode){
 		printf("Channel list  empty!\n");
+		strncpy(list,empty,MSG_SIZE);	
 		return;
 	}
 	while(pNode){
-		name=pNode->getName();
-		for(;i<MSG_SIZE;++i){
-			for(j=0;j<NAME_LENGTH && name[j] != '\0';++j){
-				list[i]=name[j];	
-			}
-			list[i]=' ';
-		}
+		addName((Node *)pNode,list,i);
 		pNode=(ChannelNode *)pNode->getNext();
 	}
+	printf("list: %s\n",list);
 }
 
 int ChannelList::addChannel(char *name){

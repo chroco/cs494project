@@ -1,1 +1,21 @@
-[]
+[
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++11",
+            "-I",
+            "./include",
+            "-g",
+            "-Wall",
+            "-Wextra",
+            "-std=c++11",
+            "-Wno-unused-parameter",
+            "-o",
+            "src/channel.o",
+            "src/channel.cpp"
+        ],
+        "directory": "/home/chad/CS494/cs494project",
+        "file": "src/channel.cpp"
+    }
+]

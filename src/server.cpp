@@ -148,8 +148,8 @@ int IRCServer::listThings(IRCPacket *pIRCPacket,int socket){
 		pChannelNode = (ChannelNode *)pChannels->searchName(pIRCPacket->p.msg);
 		if(pChannelNode){
 			pChannelNode->printList();
-			//pChannelNode->getList(list);
-			//strncpy(reply.p.msg,list,MSG_SIZE);
+			pChannelNode->getList(list);
+			strncpy(reply.p.msg,list,MSG_SIZE);
 		}
 	}else{
 		if(!pIRCPacket->p.msg[0]){
@@ -159,19 +159,25 @@ int IRCServer::listThings(IRCPacket *pIRCPacket,int socket){
 		}else if(pClients->searchName(pIRCPacket->p.msg)){
 			printf("Printing channels containing %s\n",pIRCPacket->p.msg);
 			pChannels->printList(pIRCPacket->p.msg);
+			pChannels->getList(pIRCPacket->p.msg,list);
+			strncpy(reply.p.msg,list,MSG_SIZE);
 		}
 	}
 	return sendPacket(&reply,socket);
 }
 
 int IRCServer::changeNick(IRCPacket *pIRCPacket,int socket){
-//			 success[]="Nickname successfully changed!\0";
-	IRCPacket reply={0,0,0,"Nickname successfully changed!\0"};
+	IRCPacket reply={0,0,0,0};
+	char success[]="Nickname successfully changed!\0",
+			 failure[]="Failed to change nickname";
 	if(pIRCPacket->p.msg[0]!='#'){
 		ClientNode *pClientNode = (ClientNode *)pClients->searchSocket(socket);
-		if(pClientNode){
+		if(pClientNode && pIRCPacket->p.msg && pIRCPacket->p.msg[0]!='\0'){
 			pClientNode->setName(pIRCPacket->p.msg);
-//			strcpy(reply.p.msg,success);	
+			strcpy(reply.p.msg,success);	
+			sendPacket(&reply,pClientNode->getSocket());
+		}else{
+			strcpy(reply.p.msg,failure);	
 			sendPacket(&reply,pClientNode->getSocket());
 		}
 	}else{

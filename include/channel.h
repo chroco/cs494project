@@ -28,6 +28,7 @@ class ClientList:public DLL{
 		void getList(char *list);
 		int addClient(int socket);
 		int addClient(ClientNode *pClientNode);
+		void msgClients(IRCPacket *pIRCPacket);
 		ClientNode *searchSocket(int socket);
 		ClientNode *createNode();
 		ClientNode *createNode(int socket);
@@ -43,6 +44,7 @@ class ChannelNode:public Node{
 		ChannelNode(unsigned int id,char *n);
 		void printList();
 		void getList(char *list);
+		void msgChannel(IRCPacket *pIRCPacket);
 		int addClient(ClientNode *pClientNode);
 		ClientNode *searchName(char *n);
 		~ChannelNode();
@@ -58,8 +60,9 @@ class ChannelList:public DLL{
 		ChannelNode *createNode();
 		ChannelNode *createNode(char *name);
 		void printList();
-		void printList(char *n);
 		void getList(char *list);
+		void printList(char *n);
+		void getList(char *n,char *list);
 		~ChannelList();
 	private:
 };
