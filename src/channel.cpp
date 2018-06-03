@@ -69,6 +69,27 @@ void ClientList::printList(){
 	}
 }
 
+void ClientList::getList(char *list){
+	ClientNode *pNode = (ClientNode *)pHead,
+						 *pExternal = NULL;
+	if(!pNode){
+		printf("ClientList is empty!\n");
+		return;
+	}
+	while(pNode){
+		pExternal=(ClientNode *)pNode->getExternal();
+		if(pExternal){
+			printf("clientNode_id: %u, socket: %d, name: %s\n",
+					pExternal->getNodeID(),pExternal->getSocket(),pExternal->getName());
+
+		}else{
+			printf("clientNode_id: %u, socket: %d, name: %s\n",
+					pNode->getNodeID(),pNode->getSocket(),pNode->getName());
+		}
+		pNode=(ClientNode *)pNode->getNext();
+	}
+}
+
 int ClientList::addClient(int socket){
 	return insertNode(createNode(socket));
 }
@@ -108,6 +129,10 @@ ChannelNode::ChannelNode(unsigned int id,char *n):Node(id,n){
 
 void ChannelNode::printList(){
 	if(pClients)pClients->printList();
+}
+
+void ChannelNode::getList(char *list){
+	if(pClients)pClients->getList(list);
 }
 
 int ChannelNode::addClient(ClientNode *pClientNode){
@@ -150,11 +175,31 @@ void ChannelList::printList(char *n){
 void ChannelList::printList(){
 	ChannelNode *pNode = (ChannelNode *)pHead;
 	if(!pNode){
-		printf("list is empty!\n");
+		printf("Channel list  empty!\n");
 		return;
 	}
 	while(pNode){
 		printf("ChannelNode_id: %u, name: %s\n",pNode->getNodeID(),pNode->getName());
+		pNode=(ChannelNode *)pNode->getNext();
+	}
+}
+
+void ChannelList::getList(char *list){
+	int i=0,j=0;
+	char *name=NULL;
+	ChannelNode *pNode = (ChannelNode *)pHead;
+	if(!pNode){
+		printf("Channel list  empty!\n");
+		return;
+	}
+	while(pNode){
+		name=pNode->getName();
+		for(;i<MSG_SIZE;++i){
+			for(j=0;j<NAME_LENGTH && name[j] != '\0';++j){
+				list[i]=name[j];	
+			}
+			list[i]=' ';
+		}
 		pNode=(ChannelNode *)pNode->getNext();
 	}
 }

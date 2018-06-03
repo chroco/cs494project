@@ -133,17 +133,29 @@ int IRCServer::joinChannel(IRCPacket *pIRCPacket,int socket){
 	return 0;
 }
 
+int IRCServer::partChannel(IRCPacket *pIRCPacket,int socket){
+	if(pIRCPacket->p.msg[0]!='#'){
+		return 1;
+	}
+	return pChannels->removeChannel(pIRCPacket->p.msg);
+}
+
 int IRCServer::listThings(IRCPacket *pIRCPacket,int socket){
 	IRCPacket reply={0,0,0,"List default reply fix me!\0"};
+	char list[MSG_SIZE]={'\0'};
 	if(pIRCPacket->p.msg[0]=='#'){
 		ChannelNode *pChannelNode;
 		pChannelNode = (ChannelNode *)pChannels->searchName(pIRCPacket->p.msg);
 		if(pChannelNode){
 			pChannelNode->printList();
+			//pChannelNode->getList(list);
+			//strncpy(reply.p.msg,list,MSG_SIZE);
 		}
 	}else{
 		if(!pIRCPacket->p.msg[0]){
 			pChannels->printList();
+			pChannels->getList(list);
+			strncpy(reply.p.msg,list,MSG_SIZE);
 		}else if(pClients->searchName(pIRCPacket->p.msg)){
 			printf("Printing channels containing %s\n",pIRCPacket->p.msg);
 			pChannels->printList(pIRCPacket->p.msg);
@@ -199,10 +211,7 @@ int IRCServer::handlePacket(IRCPacket *pIRCPacket,int socket){
 		case JOIN:
 			return joinChannel(pIRCPacket,socket);	
 		case PART:
-			if(pIRCPacket->p.msg[0]=='#'){
-				pChannels->removeChannel(pIRCPacket->p.msg);
-			}
-			break;
+			return partChannel(pIRCPacket,socket);
 		case LIST:
 			return listThings(pIRCPacket,socket);
 		case NICK:

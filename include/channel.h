@@ -1,6 +1,7 @@
 #ifndef _CHANNEL_H_
 #define _CHANNEL_H_
 
+#include "irc.h"
 #include "node.h"
 #include "dll.h"
 #include <arpa/inet.h>
@@ -24,6 +25,7 @@ class ClientList:public DLL{
 	public:
 		ClientList();
 		void printList();
+		void getList(char *list);
 		int addClient(int socket);
 		int addClient(ClientNode *pClientNode);
 		ClientNode *searchSocket(int socket);
@@ -40,6 +42,7 @@ class ChannelNode:public Node{
 		ChannelNode(unsigned int id);
 		ChannelNode(unsigned int id,char *n);
 		void printList();
+		void getList(char *list);
 		int addClient(ClientNode *pClientNode);
 		ClientNode *searchName(char *n);
 		~ChannelNode();
@@ -56,6 +59,7 @@ class ChannelList:public DLL{
 		ChannelNode *createNode(char *name);
 		void printList();
 		void printList(char *n);
+		void getList(char *list);
 		~ChannelList();
 	private:
 };
