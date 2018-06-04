@@ -12,10 +12,181 @@
             "-std=c++11",
             "-Wno-unused-parameter",
             "-o",
+            "src/client.o",
+            "src/client.cpp"
+        ],
+        "directory": "/home/chad/CS494/cs494project",
+        "file": "src/client.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++11",
+            "-I",
+            "./include",
+            "-g",
+            "-Wall",
+            "-Wextra",
+            "-std=c++11",
+            "-Wno-unused-parameter",
+            "-o",
+            "src/server_main.o",
+            "src/server_main.cpp"
+        ],
+        "directory": "/home/chad/CS494/cs494project",
+        "file": "src/server_main.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++11",
+            "-I",
+            "./include",
+            "-g",
+            "-Wall",
+            "-Wextra",
+            "-std=c++11",
+            "-Wno-unused-parameter",
+            "-o",
+            "src/test_main.o",
+            "src/test_main.cpp"
+        ],
+        "directory": "/home/chad/CS494/cs494project",
+        "file": "src/test_main.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++11",
+            "-I",
+            "./include",
+            "-g",
+            "-Wall",
+            "-Wextra",
+            "-std=c++11",
+            "-Wno-unused-parameter",
+            "-o",
+            "src/test.o",
+            "src/test.cpp"
+        ],
+        "directory": "/home/chad/CS494/cs494project",
+        "file": "src/test.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++11",
+            "-I",
+            "./include",
+            "-g",
+            "-Wall",
+            "-Wextra",
+            "-std=c++11",
+            "-Wno-unused-parameter",
+            "-o",
+            "src/node.o",
+            "src/node.cpp"
+        ],
+        "directory": "/home/chad/CS494/cs494project",
+        "file": "src/node.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++11",
+            "-I",
+            "./include",
+            "-g",
+            "-Wall",
+            "-Wextra",
+            "-std=c++11",
+            "-Wno-unused-parameter",
+            "-o",
+            "src/irc.o",
+            "src/irc.cpp"
+        ],
+        "directory": "/home/chad/CS494/cs494project",
+        "file": "src/irc.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++11",
+            "-I",
+            "./include",
+            "-g",
+            "-Wall",
+            "-Wextra",
+            "-std=c++11",
+            "-Wno-unused-parameter",
+            "-o",
+            "src/client_main.o",
+            "src/client_main.cpp"
+        ],
+        "directory": "/home/chad/CS494/cs494project",
+        "file": "src/client_main.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++11",
+            "-I",
+            "./include",
+            "-g",
+            "-Wall",
+            "-Wextra",
+            "-std=c++11",
+            "-Wno-unused-parameter",
+            "-o",
             "src/channel.o",
             "src/channel.cpp"
         ],
         "directory": "/home/chad/CS494/cs494project",
         "file": "src/channel.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++11",
+            "-I",
+            "./include",
+            "-g",
+            "-Wall",
+            "-Wextra",
+            "-std=c++11",
+            "-Wno-unused-parameter",
+            "-o",
+            "src/server.o",
+            "src/server.cpp"
+        ],
+        "directory": "/home/chad/CS494/cs494project",
+        "file": "src/server.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++11",
+            "-I",
+            "./include",
+            "-g",
+            "-Wall",
+            "-Wextra",
+            "-std=c++11",
+            "-Wno-unused-parameter",
+            "-o",
+            "src/dll.o",
+            "src/dll.cpp"
+        ],
+        "directory": "/home/chad/CS494/cs494project",
+        "file": "src/dll.cpp"
     }
 ]

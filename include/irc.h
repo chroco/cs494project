@@ -40,6 +40,7 @@ enum{
 	LIST,
 	NICK,
 	MSG,
+	EXIT,
 	END_OF_COMMANDS
 };
 

@@ -11,12 +11,15 @@ void *IRCClient::recvMessage(void *ptr){
 	int bytes_recv = 0,
 			*sock = (int *)ptr;
 
-
 	while(1){
 		//Receive a reply from the server
 		bytes_recv = recv(*sock,recvbuf,IRC_PACKET_SIZE,0);
-		if(bytes_recv != IRC_PACKET_SIZE){
+		if(bytes_recv == 0){
+			fprintf(stderr, "Lost connection to server...\n");
+			exit(0);
+		}else if(bytes_recv != IRC_PACKET_SIZE){
 			fprintf(stderr, "error receiving...\n");
+			exit(0);
 		}
 
 		deserializeIRCPacket(&echo,recvbuf);	
@@ -99,6 +102,7 @@ int IRCClient::joinServer(){
 				strcpy(irc_msg.p.msg,message);
 			}
 		}else{
+			printf("Type things o_0: ");
 			continue;	
 		}
 
@@ -113,14 +117,16 @@ int IRCClient::joinServer(){
 			case MSG:
 				printf("Type things o_0: ");
 				break;
+			case EXIT:
+				close(sock);
+				printf("Exiting...\n");
+				return 0;
 			default:
 				break;
 		}
 		memset(&sendbuf,0,IRC_PACKET_SIZE);
 	}
-
 	close(sock);
-
 	return 0;
 }
 

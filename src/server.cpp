@@ -1,6 +1,7 @@
 #include "server.h"
+#include <pthread.h>
 
-IRCServer::IRCServer():pChannels(NULL),welcomeSocket(0),newSocket(0){
+IRCServer::IRCServer():pChannels(NULL),welcomeSocket(0),newSocket(0),recv_thread(0){
 	memset(&serverStorage, 0, sizeof(serverStorage));
 	pChannels = new ChannelList();
 	pClients = new ClientList();
@@ -9,6 +10,35 @@ IRCServer::IRCServer():pChannels(NULL),welcomeSocket(0),newSocket(0){
 IRCServer::~IRCServer(){
 	delete pChannels;
 	delete pClients;
+	pthread_cancel(recv_thread);
+}
+
+void IRCServer::consoleInput(){
+	char eom='\0',
+		 message[BUFLEN]={'\0'};
+	while(1){
+		printf("\nType things o_0: ");
+		scanf("%2000[^\n]%c", message,&eom);
+		eom='\0';
+		fprintf(stderr,"input: %s\n",message);
+		if(strncmp(message,"/exit\0",BUFLEN)==0){
+			fprintf(stderr,"Closing clients\n");
+			if(pClients){
+				pClients->closeClients();
+			}
+			delete this;
+			exit(0);
+		}
+		memset(&message,0,sizeof(message));
+	}
+}
+
+//IRCServer *pIRCServer;
+
+void *recvMessageWrapper(void *ptr){
+	IRCServer *pIRCServer=(IRCServer *)ptr;
+	pIRCServer->consoleInput();
+	return NULL;
 }
 
 void IRCServer::welcome(){
@@ -55,7 +85,13 @@ void IRCServer::welcome(){
 
 	FD_ZERO(&rfd);
 	FD_SET(s, &rfd);
-	
+
+	if(pthread_create(&recv_thread,NULL,recvMessageWrapper,this)){
+		fprintf(stderr,"Cannot create thread...\n");
+		close(rc);
+		return;
+	}
+
 	while (1){
 		c_rfd = rfd;
 		printf("selecting...");
@@ -81,7 +117,8 @@ void IRCServer::welcome(){
 					close(i);
 					FD_CLR(i, &rfd);
 					Node *pNode=(Node *)pClients->searchSocket(i);
-					if (pNode){
+					if(pNode){
+						pChannels->removeClient((ClientNode *)pNode);
 						pClients->removeNode(pNode);
 					}
 				}else { 
@@ -134,10 +171,18 @@ int IRCServer::joinChannel(IRCPacket *pIRCPacket,int socket){
 }
 
 int IRCServer::partChannel(IRCPacket *pIRCPacket,int socket){
+	IRCPacket reply={0,0,0,"Parted channel!\0"};
+	char failure[]="Failed to part channel!\0";
 	if(pIRCPacket->p.msg[0]!='#'){
+		strncpy(reply.p.msg,failure,MSG_SIZE);
+		sendPacket(&reply,socket);
 		return 1;
 	}
-	return pChannels->removeChannel(pIRCPacket->p.msg);
+	if(pChannels->partChannel(pIRCPacket->p.msg,socket)){
+		strncpy(pIRCPacket->p.msg,failure,MSG_SIZE);
+	}
+
+	return sendPacket(&reply,socket);
 }
 
 int IRCServer::listThings(IRCPacket *pIRCPacket,int socket){
@@ -175,13 +220,15 @@ int IRCServer::changeNick(IRCPacket *pIRCPacket,int socket){
 		if(pClientNode && pIRCPacket->p.msg && pIRCPacket->p.msg[0]!='\0'){
 			pClientNode->setName(pIRCPacket->p.msg);
 			strcpy(reply.p.msg,success);	
-			sendPacket(&reply,pClientNode->getSocket());
+			sendPacket(&reply,socket);
 		}else{
 			strcpy(reply.p.msg,failure);	
-			sendPacket(&reply,pClientNode->getSocket());
+			sendPacket(&reply,socket);
 		}
 	}else{
 		fprintf(stderr,"Illegal Nickname: %s\n",pIRCPacket->p.msg);
+		strcpy(reply.p.msg,failure);	
+		sendPacket(&reply,socket);
 		return 1;
 	}
 	return 0;
@@ -212,6 +259,40 @@ int IRCServer::msgClient(IRCPacket *pIRCPacket,int socket){
 	return 0;
 }
 
+int IRCServer::msgChannel(IRCPacket *pIRCPacket,int socket){
+	char name_buf[NAME_LENGTH] = {0};
+	ChannelNode *pChannelNode = NULL;
+	
+	truncateFirstWord(name_buf,pIRCPacket->p.msg,NAME_LENGTH);
+	if(name_buf[0]!='#'){
+		fprintf(stderr,"Invalid Channel: %s\n",name_buf);
+		return 1;
+	}
+	pChannelNode=(ChannelNode *)pChannels->searchName(name_buf);
+	if(pChannelNode){
+		pChannelNode->msgChannel(pIRCPacket,socket);
+		printf("messaging channel: %s\n",name_buf);
+	}
+	printf("message: %s\n",pIRCPacket->p.msg);
+	return 0;
+}
+
+int IRCServer::msg(IRCPacket *pIRCPacket,int socket){
+	if(pIRCPacket->p.msg[0]=='#'){
+		return msgChannel(pIRCPacket,socket);
+	}
+	return msgClient(pIRCPacket,socket);
+}
+
+int IRCServer::clientExit(IRCPacket *pIRCPacket,int socket){
+	ClientNode *pClientNode = (ClientNode *)pClients->searchSocket(socket);
+	if(pClientNode){
+		pChannels->removeClient(pClientNode);
+		pClients->removeNode(pClientNode);
+	}
+	return 0;
+}
+
 int IRCServer::handlePacket(IRCPacket *pIRCPacket,int socket){
 	switch(pIRCPacket->p.op_code){
 		case JOIN:
@@ -223,7 +304,9 @@ int IRCServer::handlePacket(IRCPacket *pIRCPacket,int socket){
 		case NICK:
 			return changeNick(pIRCPacket,socket);
 		case MSG:
-			return msgClient(pIRCPacket,socket);
+			return msg(pIRCPacket,socket);
+		case EXIT:
+			return clientExit(pIRCPacket,socket);
 		default:
 			break;
 	}

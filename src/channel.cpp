@@ -30,17 +30,24 @@ ClientList::~ClientList(){}
 
 ClientNode *ClientList::searchSocket(int socket){
 	int tmp_socket=0;
-	ClientNode *pTemp = NULL;
+	ClientNode *pTemp = NULL,*pExt = NULL;
 	if(!pHead){
 		fprintf(stderr,"notlhing in list!!\n");
 		return NULL;
 	}
 	pTemp=(ClientNode *)pHead;
 	while(pTemp){
+		pExt=(ClientNode *)pTemp->getExternal();
+		if(pExt){
+			tmp_socket=pExt->getSocket();
+			if(tmp_socket==socket){
+				fprintf(stderr,"socket found!\n");
+				return pTemp;
+			}
+		}
 		tmp_socket=pTemp->getSocket();
-//		fprintf(stderr,"socket: (%d,%d)\n",tmp_socket,socket);
 		if(tmp_socket==socket){
-//			fprintf(stderr,"socket found!\n");
+			fprintf(stderr,"socket found!\n");
 			return pTemp;
 		}
 		pTemp=(ClientNode *)pTemp->getNext();
@@ -113,16 +120,19 @@ int ClientList::addClient(ClientNode *pClientNode){
 	return insertNode(createNode(pClientNode));
 }
 
-void ClientList::msgClients(IRCPacket *pIRCPacket){
+void ClientList::msgClients(IRCPacket *pIRCPacket,int socket){
 	IRCPacket reply = {0,0,0,0};
+	IRC irc;
 	ClientNode *pNode = (ClientNode *)pHead,
 						 *pExternal = NULL;
+	printf("msgClients: %s\n",pIRCPacket->p.msg);
 	char sendbuf[IRC_PACKET_SIZE] = {'\0'};
 	if(!pNode){
 		printf("ClientList is empty!\n");
 		char empty[]="ClientList is empty!\0";
 		strncpy(reply.p.msg,empty,MSG_SIZE);
-		send(,sendbuf,5,0);
+		irc.serializeIRCPacket(sendbuf,&reply);
+		send(socket,sendbuf,IRC_PACKET_SIZE,0);
 		return;
 	}
 	while(pNode){
@@ -130,9 +140,33 @@ void ClientList::msgClients(IRCPacket *pIRCPacket){
 		if(pExternal){
 			printf("clientNode_id: %u, socket: %d, name: %s\n",
 					pExternal->getNodeID(),pExternal->getSocket(),pExternal->getName());
+			socket=pExternal->getSocket();
 		}else{
 			printf("clientNode_id: %u, socket: %d, name: %s\n",
 					pNode->getNodeID(),pNode->getSocket(),pNode->getName());
+			socket=pNode->getSocket();
+		}
+		printf("sending to client: %d,%s\n",pNode->getSocket(),pNode->getName());
+		irc.serializeIRCPacket(sendbuf,pIRCPacket);
+		send(socket,sendbuf,IRC_PACKET_SIZE,0);
+		pNode=(ClientNode *)pNode->getNext();
+	}
+}
+
+void ClientList::closeClients(){
+	ClientNode *pNode = (ClientNode *)pHead,
+						 *pExternal = NULL;
+	int socket;
+	if(!pNode){
+		printf("ClientList is empty!\n");
+		return;
+	}
+	while(pNode){
+		pExternal=(ClientNode *)pNode->getExternal();
+		if(!pExternal){
+			socket=pNode->getSocket();
+			printf("Closing socket: %d\n",socket);
+			close(socket);
 		}
 		pNode=(ClientNode *)pNode->getNext();
 	}
@@ -179,12 +213,25 @@ int ChannelNode::addClient(ClientNode *pClientNode){
 	return pClients->addClient(pClientNode);
 }
 
+int ChannelNode::removeClient(ClientNode *pClientNode){
+	return pClients->removeNode((ClientNode *)pClientNode);
+}
+
+int ChannelNode::getClientCount(){
+	return pClients->getNodeCount(); 
+}
+
 ClientNode *ChannelNode::searchName(char *n){
 	return (ClientNode *)pClients->searchName(n);
 }
 
-void ChannelNode::msgChannel(IRCPacket *pIRCPacket){
-	if(pClients)pClients->msgClients(*pIRCPacket);
+ClientNode *ChannelNode::searchSocket(int socket){
+	return (ClientNode *)pClients->searchSocket(socket);
+}
+
+void ChannelNode::msgChannel(IRCPacket *pIRCPacket,int socket){
+	fprintf(stderr,"msgChannel: %s\n",pIRCPacket->p.msg);
+	if(pClients)pClients->msgClients(pIRCPacket,socket);
 }
 
 ChannelNode::~ChannelNode(){
@@ -271,6 +318,44 @@ int ChannelList::removeChannel(char *name){
 		return 1;
 	}
 	removeNode(pNode);
+	return 0;
+}
+
+int ChannelList::partChannel(char *name,int socket){
+	ChannelNode *pChannelNode = (ChannelNode *)searchName(name);
+	if(!pChannelNode){
+		return 1;
+	}
+	//search for clients in the channel and remove them
+	ClientNode *pClientNode = pChannelNode->searchSocket(socket);	
+	if(pClientNode){
+		if(pChannelNode->removeClient(pClientNode)){
+			return 1;
+		}
+	}
+	printf("Client Count: %d\n",pChannelNode->getClientCount());
+	if(pChannelNode->getClientCount()==0){
+		removeNode(pChannelNode);		
+	}
+	return 0;
+}
+
+int ChannelList::removeClient(ClientNode *pClientNode){
+	ChannelNode *pChannelNode = (ChannelNode *)pHead;
+	Node *pNode = NULL;
+	if(!pChannelNode){
+		return 1;
+	}
+	while(pChannelNode){
+		pNode = pChannelNode->searchSocket(pClientNode->getSocket());	
+		if(pNode){
+			if(pChannelNode->removeClient((ClientNode *)pNode)){
+				return 1;
+			}
+		}
+		pChannelNode=(ChannelNode *)pChannelNode->getNext();
+	}
+//	pClients->removeNode((Node*)pClientNode);
 	return 0;
 }
 

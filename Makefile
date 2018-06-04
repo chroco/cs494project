@@ -5,7 +5,7 @@ CLIENT_BIN=client
 TEST_BIN=test
 
 CLIENT_CFLAGS= -lpthread 
-SERVER_CFLAGS=
+SERVER_CFLAGS= -lpthread
 TEST_CFLAGS=
 FLAGS=-I ./include -g -Wall -Wextra \
 			-std=c++11 -Wno-unused-parameter 
@@ -89,5 +89,5 @@ clean:
 valgrind: $(BIN)
 	valgrind --leak-check=full \
 		./$(SERVER_BIN)
-		./$(CLIENT_BIN)
-		./$(TEST_BIN)
+#		./$(CLIENT_BIN)
+#		./$(TEST_BIN)
