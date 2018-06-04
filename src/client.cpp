@@ -113,6 +113,7 @@ int IRCClient::joinServer(){
 		}
 		
 		//Send some data
+		sendPacket(&irc_msg,sock);
 		switch(irc_msg.p.op_code){
 			case MSG:
 				printf("Type things o_0: ");
