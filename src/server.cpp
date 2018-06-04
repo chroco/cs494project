@@ -259,6 +259,7 @@ int IRCServer::msgClient(IRCPacket *pIRCPacket,int socket){
 	return 0;
 }
 
+/*
 int IRCServer::msgChannel(IRCPacket *pIRCPacket,int socket){
 	char name_buf[NAME_LENGTH] = {0};
 	ChannelNode *pChannelNode = NULL;
@@ -274,6 +275,28 @@ int IRCServer::msgChannel(IRCPacket *pIRCPacket,int socket){
 		printf("messaging channel: %s\n",name_buf);
 	}
 	printf("message: %s\n",pIRCPacket->p.msg);
+	return 0;
+}
+//*/
+
+int IRCServer::msgChannel(IRCPacket *pIRCPacket,int socket){
+	char name_buf[NAME_LENGTH] = {'\0'},
+			 *channel[MAX_CHANNELS] = {NULL};
+	ChannelNode *pChannelNode = NULL;
+	int i=0;
+
+	for(;i<MAX_CHANNELS && pIRCPacket->p.msg[0]=='#';++i){
+		memset(name_buf,0,NAME_LENGTH);
+		truncateFirstWord(name_buf,pIRCPacket->p.msg,NAME_LENGTH);
+		channel[i] = new char[NAME_LENGTH];
+		strncpy(channel[i],name_buf,NAME_LENGTH);
+	}
+	for(i=0;channel[i] && i<MAX_CHANNELS;++i){
+		pChannelNode=(ChannelNode *)pChannels->searchName(channel[i]);
+		if(pChannelNode){
+			pChannelNode->msgChannel(pIRCPacket,socket);
+		}
+	}
 	return 0;
 }
 

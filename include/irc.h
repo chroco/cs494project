@@ -18,7 +18,8 @@
 
 #define HOME "127.0.0.1"
 #define PORT 7891
-#define NAME_LEN 32
+//#define NAME_LENGTH 32
+#define MAX_CHANNELS 10
 
 #define MSG_SIZE	int((1<<10) - 3*sizeof(uint32_t))			
 #define CMD_SIZE	10	

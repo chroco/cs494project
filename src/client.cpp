@@ -23,11 +23,11 @@ void *IRCClient::recvMessage(void *ptr){
 		}
 
 		deserializeIRCPacket(&echo,recvbuf);	
-		printf("\nbytes_recv: %d\n",bytes_recv);
-		printf("%u,%u,%u\n%s\n",
-				echo.p.length,echo.p.op_code,echo.p.error_code,echo.p.msg
-		);
-		//fprintf(stderr,"Type things o_0: ");
+//		printf("\nbytes_recv: %d\n",bytes_recv);
+//		printf("%u,%u,%u\n%s\n",
+//				echo.p.length,echo.p.op_code,echo.p.error_code,echo.p.msg
+//		);
+		printf("\n%s\n",echo.p.msg);
 		printf("Type things o_0: ");
 		fflush(stdout);
 		memset(&echo,0,IRC_PACKET_SIZE);
@@ -86,17 +86,22 @@ int IRCClient::joinServer(){
 		eom='\0';
 
 		if(message[0]=='/'){
-			printf("Issuing command: ");
+			//printf("Issuing command: ");
 			truncateFirstWord(cmd,message,CMD_SIZE);
 			printf("\n");
 			for(i=0;i<=END_OF_COMMANDS;++i){
 				if(i==END_OF_COMMANDS){
-					fprintf(stderr,"command format error!\n");
+					break;
 				}
 				if(strcmp(cmd,command[i])==0){
 					irc_msg.p.op_code=i;
 					break;
 				}
+			}
+			if(i==END_OF_COMMANDS){
+				fprintf(stderr,"command format error!\n");
+				printf("Type things o_0: ");
+				continue;	
 			}
 			if(cmd[1]){
 				strcpy(irc_msg.p.msg,message);
@@ -105,7 +110,7 @@ int IRCClient::joinServer(){
 			printf("Type things o_0: ");
 			continue;	
 		}
-
+		
 		//Send some data
 		serializeIRCPacket(sendbuf,&irc_msg);	
 		bytes_sent=send(sock,sendbuf,IRC_PACKET_SIZE,0);
