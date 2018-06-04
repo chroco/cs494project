@@ -93,3 +93,16 @@ int IRC::truncateFirstWord(char *word,char *message,int size){
 //	printf("message after truncation: %s\n",message);
 	return 0;
 }
+
+int IRC::sendPacket(IRCPacket *pIRCPacket,int socket){
+	char sendbuf[IRC_PACKET_SIZE] = {0};
+	int bytes_sent;
+	serializeIRCPacket(sendbuf,pIRCPacket);	
+	bytes_sent=send(socket,sendbuf,IRC_PACKET_SIZE,0);
+	if(bytes_sent < 0){
+		fprintf(stderr, "error sending...");
+		return 1;
+	}
+//	fprintf(stderr, "bytes_sent: %d\n",bytes_sent);
+	return 0;
+}

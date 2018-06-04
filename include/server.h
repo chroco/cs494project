@@ -10,7 +10,7 @@ class IRCServer : public IRC{
 		~IRCServer();
 		void welcome();
 		void getStats();
-		int sendPacket(IRCPacket *pIRCPacket,int socket);
+	//int sendPacket(IRCPacket *pIRCPacket,int socket);
 		void consoleInput();
 	private:
 		int handlePacket(IRCPacket *pIRCPacket,int socket);

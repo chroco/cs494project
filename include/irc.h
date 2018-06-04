@@ -72,6 +72,7 @@ class IRC{
 		void serialize_msg(char *dst,char *src);
 		void deserialize_msg(char *dst,char *src);
 		int truncateFirstWord(char *word,char *message,int size);
+		int sendPacket(IRCPacket *pIRCPacket,int socket);
 	protected:
 		char buffer[PACKET_SIZE];
 		socklen_t addr_size;

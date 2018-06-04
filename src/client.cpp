@@ -23,10 +23,12 @@ void *IRCClient::recvMessage(void *ptr){
 		}
 
 		deserializeIRCPacket(&echo,recvbuf);	
-//		printf("\nbytes_recv: %d\n",bytes_recv);
-//		printf("%u,%u,%u\n%s\n",
-//				echo.p.length,echo.p.op_code,echo.p.error_code,echo.p.msg
-//		);
+/*
+		printf("\nbytes_recv: %d\n",bytes_recv);
+		printf("%u,%u,%u\n%s\n",
+				echo.p.length,echo.p.op_code,echo.p.error_code,echo.p.msg
+		);
+//*/
 		printf("\n%s\n",echo.p.msg);
 		printf("Type things o_0: ");
 		fflush(stdout);
@@ -48,8 +50,7 @@ int IRCClient::joinServer(){
 			 cmd[CMD_SIZE]={'\0'},
 			 message[BUFLEN]={0},
 			 sendbuf[IRC_PACKET_SIZE]={0};
-	int sock,i,bytes_sent = 0;//, bytes_recv = 0;
-
+	int sock,i;
 	struct sockaddr_in server;
 	pthread_t recv_thread;
 
@@ -112,12 +113,6 @@ int IRCClient::joinServer(){
 		}
 		
 		//Send some data
-		serializeIRCPacket(sendbuf,&irc_msg);	
-		bytes_sent=send(sock,sendbuf,IRC_PACKET_SIZE,0);
-		if(bytes_sent != IRC_PACKET_SIZE){
-			fprintf(stderr, "error sending...\n");
-		}
-		printf("bytes_sent: %d\n",bytes_sent);
 		switch(irc_msg.p.op_code){
 			case MSG:
 				printf("Type things o_0: ");
